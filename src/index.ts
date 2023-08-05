@@ -9,7 +9,7 @@ let currentHTML;
 //let col;
 let gpaInt;
 let sinceLastChecked;
-let changes = [];
+const changes = [];
 
 // entry point. if the page is fully loaded, run stuff, else wait and try again
 function ready(): void {
@@ -51,31 +51,31 @@ function hashchange() {
 		elem.style.width = "22%";
 	});
 
-	if (typeof $("#gradesContainer")[0] == "undefined") {
+	if ($("#gradesContainer")[0] === undefined) {
 		col[0].insertAdjacentHTML("afterend", html);
 	} else {
 		$("#gradesContainer")[0].style.width = "30%";
 	}
-	var innerTxt = $("#gradesText")[0];
+	const innerTxt = $("#gradesText")[0];
 	innerTxt.style.fontSize = "11.5px";
 	innerTxt.innerHTML = "";
-	if (changes.length == 0 || changes[0].Old == "") {
+	if (changes.length === 0 || changes[0].Old == "") {
 		innerTxt.innerHTML =
 			"Your grades are the same as the last time you checked" +
 			sinceLastChecked;
 	} else {
 		let arrow;
-		for (let i = 0; i < changes.length; i++) {
-			arrow = changes[i].Increase ? up_arrow : down_arrow;
+		for (const change_ of changes) {
+			arrow = change_.Increase ? up_arrow : down_arrow;
 			innerTxt.innerHTML +=
 				"<img width='14' height='14' src=" +
 				arrow +
 				" <b>" +
-				changes[i].Class +
+				change_.Class +
 				"</b> used to be <b>" +
-				changes[i].Old +
+				change_.Old +
 				"</b>, now it's <b>" +
-				changes[i].New +
+				change_.New +
 				"</b>.<br/>";
 		}
 	}
@@ -84,22 +84,22 @@ function hashchange() {
 function setBannerColor() {
 	function hexToRgb(hex) {
 		hex = hex.replace(
-			/^#?([a-f\d])([a-f\d])([a-f\d])$/i,
+			/^#?([\da-f])([\da-f])([\da-f])$/i,
 			function (m, r, g, b) {
 				return r + r + g + g + b + b;
 			}
 		);
-		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		const result = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex);
 		return result
 			? {
-					r: parseInt(result[1], 16),
-					g: parseInt(result[2], 16),
-					b: parseInt(result[3], 16),
+					r: Number.parseInt(result[1], 16),
+					g: Number.parseInt(result[2], 16),
+					b: Number.parseInt(result[3], 16),
 			  }
 			: null;
 	}
 
-	var colors = [];
+	const colors = [];
 
 	colors[0] = hexToRgb(localStorage.getItem("gaugeColor"));
 
@@ -123,7 +123,8 @@ function setBannerColor() {
 	createColor(8, 230, 230, 230); /*Top gradient color*/
 	colors[9] = colors[8];
 
-	var original = colors[0].r == 0 && colors[0].g == 129 && colors[0].b == 201;
+	const original =
+		colors[0].r == 0 && colors[0].g == 129 && colors[0].b == 201;
 
 	for (var i = 0; i < 10; i++) {
 		colors[i].r > 255 ? (colors[i].r = 255) : null;
@@ -133,37 +134,38 @@ function setBannerColor() {
 			"rgb(" + colors[i].r + "," + colors[i].g + "," + colors[i].b + ")";
 	}
 
-	if (!original)
-		$(
-			"#app-style"
-		)[0].children[0].children[0].innerHTML = `.pri-100-fgc, .pri-100-fgc-hover:hover { color: ${colors[0]} !important; }.pri-100-bgc, .pri-100-bgc-hover:hover { background-color: ${colors[0]} !important; }.pri-100-boxshadow, .pri-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[0]}; -webkit-box-shadow: 1px 1px 3px ${colors[0]}; box-shadow: 1px 1px 3px ${colors[0]}; }.pri-100-bordercolor, .pri-100-bordercolor-hover:hover { border-color: ${colors[0]}; }.pri-75-fgc, .pri-75-fgc-hover:hover { color: ${colors[1]}  !important; }.pri-75-bgc, .pri-75-bgc-hover:hover { background-color:${colors[1]}  !important; }.pri-75-boxshadow, .pri-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[1]}; -webkit-box-shadow: 1px 1px 3px ${colors[1]}; box-shadow: 1px 1px 3px ${colors[1]}; }.pri-75-bordercolor, .pri-75-bordercolor-hover:hover { border-color: ${colors[1]}; }.pri-50-fgc, .pri-50-fgc-hover:hover { color: ${colors[2]}!important; }.pri-50-bgc, .pri-50-bgc-hover:hover { background-color: ${colors[2]} !important; }.pri-50-boxshadow, .pri-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px${colors[2]}; -webkit-box-shadow: 1px 1px 3px ${colors[2]}; box-shadow: 1px 1px 3px ${colors[2]}; }.pri-50-bordercolor, .pri-50-bordercolor-hover:hover { border-color: ${colors[2]}; }.pri-25-fgc, .pri-25-fgc-hover:hover { color: ${colors[3]}!important; }.pri-25-bgc, .pri-25-bgc-hover:hover { background-color:${colors[3]} !important; }.pri-25-boxshadow, .pri-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[3]}; -webkit-box-shadow: 1px 1px 3px ${colors[3]}; box-shadow: 1px 1px 3px ${colors[3]}; }.pri-25-bordercolor, .pri-25-bordercolor-hover:hover { border-color: ${colors[3]}; }.pri-15-fgc, .pri-15-fgc-hover:hover { color: ${colors[4]} !important; }.pri-15-bgc, .pri-15-bgc-hover:hover { background-color: ${colors[4]} !important; }.pri-15-boxshadow, .pri-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[4]}; -webkit-box-shadow: 1px 1px 3px ${colors[4]}; box-shadow: 1px 1px 3px ${colors[4]}; }.pri-15-bordercolor, .pri-15-bordercolor-hover:hover { border-color: ${colors[4]}; }.sec-100-fgc, .sec-100-fgc-hover:hover { color: ${colors[5]} !important; }.sec-100-bgc, .sec-100-bgc-hover:hover { background-color: ${colors[5]} !important; }.sec-100-boxshadow, .sec-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[5]}; -webkit-box-shadow: 1px 1px 3px ${colors[5]}; box-shadow: 1px 1px 3px ${colors[5]}; }.sec-100-bordercolor, .sec-100-bordercolor-hover:hover { border-color: ${colors[5]}; }.sec-75-fgc, .sec-75-fgc-hover:hover { color: ${colors[6]} !important; }.sec-75-bgc, .sec-75-bgc-hover:hover { background-color: ${colors[6]} !important; }.sec-75-boxshadow, .sec-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[6]}; -webkit-box-shadow: 1px 1px 3px ${colors[6]}; box-shadow: 1px 1px 3px ${colors[6]}; }.sec-75-bordercolor, .sec-75-bordercolor-hover:hover { border-color: ${colors[6]}; }.sec-50-fgc, .sec-50-fgc-hover:hover { color: ${colors[7]} !important; }.sec-50-bgc, .sec-50-bgc-hover:hover { background-color: ${colors[7]} !important; }.sec-50-boxshadow, .sec-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[7]}; -webkit-box-shadow: 1px 1px 3px ${colors[7]}; box-shadow: 1px 1px 3px ${colors[7]}; }.sec-50-bordercolor, .sec-50-bordercolor-hover:hover { border-color: ${colors[7]}; }.sec-25-fgc, .sec-25-fgc-hover:hover { color: ${colors[8]} !important; }.sec-25-bgc, .sec-25-bgc-hover:hover { background-color: ${colors[8]} !important; }.sec-25-boxshadow, .sec-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[8]}; -webkit-box-shadow: 1px 1px 3px ${colors[8]}; box-shadow: 1px 1px 3px ${colors[8]}; }.sec-25-bordercolor, .sec-25-bordercolor-hover:hover { border-color: ${colors[8]}; }.sec-15-fgc, .sec-15-fgc-hover:hover { color: ${colors[9]} !important; }.sec-15-bgc, .sec-15-bgc-hover:hover { background-color: ${colors[9]} !important; }.sec-15-boxshadow, .sec-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[9]}; -webkit-box-shadow: 1px 1px 3px ${colors[9]}; box-shadow: 1px 1px 3px ${colors[9]}; }.sec-15-bordercolor, .sec-15-bordercolor-hover:hover { border-color: ${colors[9]}; }#site-nav ul.topnav > li > a.active,#site-nav ul.topnav > li > a:hover,.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { background-repeat: repeat-x;   /*Repeat the gradient */background-image: -moz-linear-gradient(top, ${colors[8]} 0%, ${colors[7]} 100%);  /*FF3.6+ */background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,${colors[8]}), color-stop(100%,${colors[7]}));   /*Chrome,Safari4+ */background-image: -webkit-linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);   /*Chrome 10+,Safari 5.1+ */background-image: -ms-linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);   /*IE10+ */background-image: -o-linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);  /*Opera 11.10+ */filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='${colors[8]}', endColorstr='${colors[7]}',GradientType=0 );   /*IE6-9 */background-image: linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);   /*W3C */}.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { border-color: ${colors[6]};}.btn-primary {background-repeat: repeat-x;background-color: ${colors[0]};background-image: -moz-linear-gradient(top, ${colors[1]}, ${colors[0]}); background-image: -ms-linear-gradient(top, ${colors[1]}, ${colors[0]});background-image: -webkit-gradient(linear, 0 0, 0 100%, from(${colors[1]}), to(${colors[0]}));background-image: -webkit-linear-gradient(top, ${colors[1]}, ${colors[0]});background-image: -o-linear-gradient(top, ${colors[1]}, ${colors[0]});background-image: linear-gradient(top, ${colors[1]}, ${colors[0]});}.btn-primary:hover,.btn-primary:active,.btn-primary.active,.btn-primary.disabled,.btn-primary[disabled]     .nav-list > li > a:hover {background-color: ${colors[0]}; }.modal-header, .modal-header A {color: #ffffff !important;}.label:not([class*="label label-"]) {background-color: ${colors[0]} !important;}.subnavbar {background-color: ${colors[9]} !important;border-color: ${colors[8]} !important;}div.token-input-dropdown ul li.token-input-selected-dropdown-item {background-color: ${colors[0]} !important;}#site-nav UL.topnav > LI > a.active {background-color: ${colors[3]} !important;}#site-nav DIV.subnav UL > li > a.active {background-color: ${colors[8]} !important;}#site-mobile-menu.app-mobile-menu, #site-mobile-menu .app-mobile-level {background-color: ${colors[0]} !important;}`;
-	else
+	if (original) {
 		$(
 			"#app-style"
 		)[0].children[0].children[0].innerHTML = `.pri-100-fgc, .pri-100-fgc-hover:hover { color: #004a97 !important; }.pri-100-bgc, .pri-100-bgc-hover:hover { background-color: #004a97 !important; }.pri-100-boxshadow, .pri-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #004a97; -webkit-box-shadow: 1px 1px 3px #004a97; box-shadow: 1px 1px 3px #004a97; }.pri-100-bordercolor, .pri-100-bordercolor-hover:hover { border-color: #004a97; }.pri-75-fgc, .pri-75-fgc-hover:hover { color: #4077b1 !important; }.pri-75-bgc, .pri-75-bgc-hover:hover { background-color: #4077b1 !important; }.pri-75-boxshadow, .pri-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #4077b1; -webkit-box-shadow: 1px 1px 3px #4077b1; box-shadow: 1px 1px 3px #4077b1; }.pri-75-bordercolor, .pri-75-bordercolor-hover:hover { border-color: #4077b1; }.pri-50-fgc, .pri-50-fgc-hover:hover { color: #80a4cb !important; }.pri-50-bgc, .pri-50-bgc-hover:hover { background-color: #80a4cb !important; }.pri-50-boxshadow, .pri-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #80a4cb; -webkit-box-shadow: 1px 1px 3px #80a4cb; box-shadow: 1px 1px 3px #80a4cb; }.pri-50-bordercolor, .pri-50-bordercolor-hover:hover { border-color: #80a4cb; }.pri-25-fgc, .pri-25-fgc-hover:hover { color: #bfd2e5 !important; }.pri-25-bgc, .pri-25-bgc-hover:hover { background-color: #bfd2e5 !important; }.pri-25-boxshadow, .pri-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #bfd2e5; -webkit-box-shadow: 1px 1px 3px #bfd2e5; box-shadow: 1px 1px 3px #bfd2e5; }.pri-25-bordercolor, .pri-25-bordercolor-hover:hover { border-color: #bfd2e5; }.pri-15-fgc, .pri-15-fgc-hover:hover { color: #d9e4ef !important; }.pri-15-bgc, .pri-15-bgc-hover:hover { background-color: #d9e4ef !important; }.pri-15-boxshadow, .pri-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #d9e4ef; -webkit-box-shadow: 1px 1px 3px #d9e4ef; box-shadow: 1px 1px 3px #d9e4ef; }.pri-15-bordercolor, .pri-15-bordercolor-hover:hover { border-color: #d9e4ef; }.sec-100-fgc, .sec-100-fgc-hover:hover { color: #65b2e9 !important; }.sec-100-bgc, .sec-100-bgc-hover:hover { background-color: #65b2e9 !important; }.sec-100-boxshadow, .sec-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #65b2e9; -webkit-box-shadow: 1px 1px 3px #65b2e9; box-shadow: 1px 1px 3px #65b2e9; }.sec-100-bordercolor, .sec-100-bordercolor-hover:hover { border-color: #65b2e9; }.sec-75-fgc, .sec-75-fgc-hover:hover { color: #8cc5ee !important; }.sec-75-bgc, .sec-75-bgc-hover:hover { background-color: #8cc5ee !important; }.sec-75-boxshadow, .sec-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #8cc5ee; -webkit-box-shadow: 1px 1px 3px #8cc5ee; box-shadow: 1px 1px 3px #8cc5ee; }.sec-75-bordercolor, .sec-75-bordercolor-hover:hover { border-color: #8cc5ee; }.sec-50-fgc, .sec-50-fgc-hover:hover { color: #b2d8f4 !important; }.sec-50-bgc, .sec-50-bgc-hover:hover { background-color: #b2d8f4 !important; }.sec-50-boxshadow, .sec-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #b2d8f4; -webkit-box-shadow: 1px 1px 3px #b2d8f4; box-shadow: 1px 1px 3px #b2d8f4; }.sec-50-bordercolor, .sec-50-bordercolor-hover:hover { border-color: #b2d8f4; }.sec-25-fgc, .sec-25-fgc-hover:hover { color: #d8ecfa !important; }.sec-25-bgc, .sec-25-bgc-hover:hover { background-color: #d8ecfa !important; }.sec-25-boxshadow, .sec-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #d8ecfa; -webkit-box-shadow: 1px 1px 3px #d8ecfa; box-shadow: 1px 1px 3px #d8ecfa; }.sec-25-bordercolor, .sec-25-bordercolor-hover:hover { border-color: #d8ecfa; }.sec-15-fgc, .sec-15-fgc-hover:hover { color: #e8f3fc !important; }.sec-15-bgc, .sec-15-bgc-hover:hover { background-color: #e8f3fc !important; }.sec-15-boxshadow, .sec-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #e8f3fc; -webkit-box-shadow: 1px 1px 3px #e8f3fc; box-shadow: 1px 1px 3px #e8f3fc; }.sec-15-bordercolor, .sec-15-bordercolor-hover:hover { border-color: #e8f3fc; }#site-nav ul.topnav > li > a.active,#site-nav ul.topnav > li > a:hover,.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { background-repeat: repeat-x;   /*Repeat the gradient */background-image: -moz-linear-gradient(top, #d8ecfa 0%, #b2d8f4 100%);  /*FF3.6+ */background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d8ecfa), color-stop(100%,#b2d8f4));   /*Chrome,Safari4+ */background-image: -webkit-linear-gradient(top, #d8ecfa 0%,#b2d8f4 100%);   /*Chrome 10+,Safari 5.1+ */background-image: -ms-linear-gradient(top, #d8ecfa 0%,#b2d8f4 100%);   /*IE10+ */background-image: -o-linear-gradient(top, #d8ecfa 0%,#b2d8f4 100%);  /*Opera 11.10+ */filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d8ecfa', endColorstr='#b2d8f4',GradientType=0 );   /*IE6-9 */background-image: linear-gradient(top, #d8ecfa 0%,#b2d8f4 100%);   /*W3C */}.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { border-color: #8cc5ee;}.btn-primary {background-repeat: repeat-x;background-color: #004a97;background-image: -moz-linear-gradient(top, #4077b1, #004a97); background-image: -ms-linear-gradient(top, #4077b1, #004a97);background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#4077b1), to(#004a97));background-image: -webkit-linear-gradient(top, #4077b1, #004a97);background-image: -o-linear-gradient(top, #4077b1, #004a97);background-image: linear-gradient(top, #4077b1, #004a97);}.btn-primary:hover,.btn-primary:active,.btn-primary.active,.btn-primary.disabled,.btn-primary[disabled]     .nav-list > li > a:hover {background-color: #004a97; }.modal-header, .modal-header A {color: #000 !important;}.label:not([class*="label label-"]) {background-color: #004a97 !important;}.subnavbar {background-color: #e8f3fc !important;border-color: #d8ecfa !important;}div.token-input-dropdown ul li.token-input-selected-dropdown-item {background-color: #004a97 !important;}#site-nav UL.topnav > LI > a.active {background-color: #bfd2e5 !important;}#site-nav DIV.subnav UL > li > a.active {background-color: #d8ecfa !important;}#site-mobile-menu.app-mobile-menu, #site-mobile-menu .app-mobile-level {background-color: #004a97 !important;}`;
+	} else {
+		$(
+			"#app-style"
+		)[0].children[0].children[0].innerHTML = `.pri-100-fgc, .pri-100-fgc-hover:hover { color: ${colors[0]} !important; }.pri-100-bgc, .pri-100-bgc-hover:hover { background-color: ${colors[0]} !important; }.pri-100-boxshadow, .pri-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[0]}; -webkit-box-shadow: 1px 1px 3px ${colors[0]}; box-shadow: 1px 1px 3px ${colors[0]}; }.pri-100-bordercolor, .pri-100-bordercolor-hover:hover { border-color: ${colors[0]}; }.pri-75-fgc, .pri-75-fgc-hover:hover { color: ${colors[1]}  !important; }.pri-75-bgc, .pri-75-bgc-hover:hover { background-color:${colors[1]}  !important; }.pri-75-boxshadow, .pri-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[1]}; -webkit-box-shadow: 1px 1px 3px ${colors[1]}; box-shadow: 1px 1px 3px ${colors[1]}; }.pri-75-bordercolor, .pri-75-bordercolor-hover:hover { border-color: ${colors[1]}; }.pri-50-fgc, .pri-50-fgc-hover:hover { color: ${colors[2]}!important; }.pri-50-bgc, .pri-50-bgc-hover:hover { background-color: ${colors[2]} !important; }.pri-50-boxshadow, .pri-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px${colors[2]}; -webkit-box-shadow: 1px 1px 3px ${colors[2]}; box-shadow: 1px 1px 3px ${colors[2]}; }.pri-50-bordercolor, .pri-50-bordercolor-hover:hover { border-color: ${colors[2]}; }.pri-25-fgc, .pri-25-fgc-hover:hover { color: ${colors[3]}!important; }.pri-25-bgc, .pri-25-bgc-hover:hover { background-color:${colors[3]} !important; }.pri-25-boxshadow, .pri-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[3]}; -webkit-box-shadow: 1px 1px 3px ${colors[3]}; box-shadow: 1px 1px 3px ${colors[3]}; }.pri-25-bordercolor, .pri-25-bordercolor-hover:hover { border-color: ${colors[3]}; }.pri-15-fgc, .pri-15-fgc-hover:hover { color: ${colors[4]} !important; }.pri-15-bgc, .pri-15-bgc-hover:hover { background-color: ${colors[4]} !important; }.pri-15-boxshadow, .pri-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[4]}; -webkit-box-shadow: 1px 1px 3px ${colors[4]}; box-shadow: 1px 1px 3px ${colors[4]}; }.pri-15-bordercolor, .pri-15-bordercolor-hover:hover { border-color: ${colors[4]}; }.sec-100-fgc, .sec-100-fgc-hover:hover { color: ${colors[5]} !important; }.sec-100-bgc, .sec-100-bgc-hover:hover { background-color: ${colors[5]} !important; }.sec-100-boxshadow, .sec-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[5]}; -webkit-box-shadow: 1px 1px 3px ${colors[5]}; box-shadow: 1px 1px 3px ${colors[5]}; }.sec-100-bordercolor, .sec-100-bordercolor-hover:hover { border-color: ${colors[5]}; }.sec-75-fgc, .sec-75-fgc-hover:hover { color: ${colors[6]} !important; }.sec-75-bgc, .sec-75-bgc-hover:hover { background-color: ${colors[6]} !important; }.sec-75-boxshadow, .sec-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[6]}; -webkit-box-shadow: 1px 1px 3px ${colors[6]}; box-shadow: 1px 1px 3px ${colors[6]}; }.sec-75-bordercolor, .sec-75-bordercolor-hover:hover { border-color: ${colors[6]}; }.sec-50-fgc, .sec-50-fgc-hover:hover { color: ${colors[7]} !important; }.sec-50-bgc, .sec-50-bgc-hover:hover { background-color: ${colors[7]} !important; }.sec-50-boxshadow, .sec-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[7]}; -webkit-box-shadow: 1px 1px 3px ${colors[7]}; box-shadow: 1px 1px 3px ${colors[7]}; }.sec-50-bordercolor, .sec-50-bordercolor-hover:hover { border-color: ${colors[7]}; }.sec-25-fgc, .sec-25-fgc-hover:hover { color: ${colors[8]} !important; }.sec-25-bgc, .sec-25-bgc-hover:hover { background-color: ${colors[8]} !important; }.sec-25-boxshadow, .sec-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[8]}; -webkit-box-shadow: 1px 1px 3px ${colors[8]}; box-shadow: 1px 1px 3px ${colors[8]}; }.sec-25-bordercolor, .sec-25-bordercolor-hover:hover { border-color: ${colors[8]}; }.sec-15-fgc, .sec-15-fgc-hover:hover { color: ${colors[9]} !important; }.sec-15-bgc, .sec-15-bgc-hover:hover { background-color: ${colors[9]} !important; }.sec-15-boxshadow, .sec-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[9]}; -webkit-box-shadow: 1px 1px 3px ${colors[9]}; box-shadow: 1px 1px 3px ${colors[9]}; }.sec-15-bordercolor, .sec-15-bordercolor-hover:hover { border-color: ${colors[9]}; }#site-nav ul.topnav > li > a.active,#site-nav ul.topnav > li > a:hover,.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { background-repeat: repeat-x;   /*Repeat the gradient */background-image: -moz-linear-gradient(top, ${colors[8]} 0%, ${colors[7]} 100%);  /*FF3.6+ */background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,${colors[8]}), color-stop(100%,${colors[7]}));   /*Chrome,Safari4+ */background-image: -webkit-linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);   /*Chrome 10+,Safari 5.1+ */background-image: -ms-linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);   /*IE10+ */background-image: -o-linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);  /*Opera 11.10+ */filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='${colors[8]}', endColorstr='${colors[7]}',GradientType=0 );   /*IE6-9 */background-image: linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);   /*W3C */}.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { border-color: ${colors[6]};}.btn-primary {background-repeat: repeat-x;background-color: ${colors[0]};background-image: -moz-linear-gradient(top, ${colors[1]}, ${colors[0]}); background-image: -ms-linear-gradient(top, ${colors[1]}, ${colors[0]});background-image: -webkit-gradient(linear, 0 0, 0 100%, from(${colors[1]}), to(${colors[0]}));background-image: -webkit-linear-gradient(top, ${colors[1]}, ${colors[0]});background-image: -o-linear-gradient(top, ${colors[1]}, ${colors[0]});background-image: linear-gradient(top, ${colors[1]}, ${colors[0]});}.btn-primary:hover,.btn-primary:active,.btn-primary.active,.btn-primary.disabled,.btn-primary[disabled]     .nav-list > li > a:hover {background-color: ${colors[0]}; }.modal-header, .modal-header A {color: #ffffff !important;}.label:not([class*="label label-"]) {background-color: ${colors[0]} !important;}.subnavbar {background-color: ${colors[9]} !important;border-color: ${colors[8]} !important;}div.token-input-dropdown ul li.token-input-selected-dropdown-item {background-color: ${colors[0]} !important;}#site-nav UL.topnav > LI > a.active {background-color: ${colors[3]} !important;}#site-nav DIV.subnav UL > li > a.active {background-color: ${colors[8]} !important;}#site-mobile-menu.app-mobile-menu, #site-mobile-menu .app-mobile-level {background-color: ${colors[0]} !important;}`;
+	}
 }
 
 function settings() {
-	if (typeof localStorage.getItem("showGPA") != "string") {
-		localStorage.setItem("showGPA", "true");
+	if (typeof localStorage.getItem("showGPA") == "string") {
+		showGPA = localStorage.getItem("showGPA") ? true : false;
 	} else {
-		showGPA = !!localStorage.getItem("showGPA") ? true : false;
+		localStorage.setItem("showGPA", "true");
 	}
 	inSettings = false;
-	var innerText = $("#gradesText")[0];
-	if (typeof localStorage.getItem("gaugeColor") != "string") {
-		localStorage.setItem("gaugeColor", "#0081c9");
-	} else {
+	const innerText = $("#gradesText")[0];
+	if (typeof localStorage.getItem("gaugeColor") == "string") {
 		gaugeColor = localStorage.getItem("gaugeColor");
+	} else {
+		localStorage.setItem("gaugeColor", "#0081c9");
 	}
-	var settingsInnerHTML = `Change your OnCampus theme! <input id='colorPicker' type='color'> <span style='color: #0081c9; cursor: pointer;' id='defaultColor'>(default)</span><br>Show your GPA <input id='gpaOpt' type='checkbox'>`;
-	var tog = $("#gradesPanelToggle")[0];
-	var textArea = $("#textArea")[0];
-	var gearHTML =
+	const settingsInnerHTML = `Change your OnCampus theme! <input id='colorPicker' type='color'> <span style='color: #0081c9; cursor: pointer;' id='defaultColor'>(default)</span><br>Show your GPA <input id='gpaOpt' type='checkbox'>`;
+	const tog = $("#gradesPanelToggle")[0];
+	const textArea = $("#textArea")[0];
+	const gearHTML =
 		`<img id='gear' class='gear-out' src=` +
 		gear_icon +
 		` width='32' height='32'>`;
-	if (typeof $("#gear")[0] == "undefined")
+	if ($("#gear")[0] === undefined)
 		textArea.insertAdjacentHTML("beforeend", gearHTML);
 	$("#gear")[0].addEventListener("click", settingsClicked, false);
 	function addEventListeners() {
@@ -179,9 +181,9 @@ function settings() {
 		$("#colorPicker")[0].addEventListener(
 			"change",
 			() => {
-				if (!!$("#gpaText")[0])
+				if ($("#gpaText")[0])
 					$("#gpaText")[0].style.color = $("#colorPicker")[0].value;
-				if (!!$("#meter")[0])
+				if ($("#meter")[0])
 					$("#meter")[0].style.stroke = $("#colorPicker")[0].value;
 				localStorage.setItem("gaugeColor", $("#colorPicker")[0].value);
 				gaugeColor = $("#colorPicker")[0].value;
@@ -192,9 +194,8 @@ function settings() {
 		$("#defaultColor")[0].addEventListener(
 			"click",
 			() => {
-				if (!!$("#gpaText")[0])
-					$("#gpaText")[0].style.color = "#0081c9";
-				if (!!$("#meter")[0]) $("#meter")[0].style.stroke = "#0081c9";
+				if ($("#gpaText")[0]) $("#gpaText")[0].style.color = "#0081c9";
+				if ($("#meter")[0]) $("#meter")[0].style.stroke = "#0081c9";
 				localStorage.setItem("gaugeColor", "#0081c9");
 				$("#colorPicker")[0].value = "#0081c9";
 				gaugeColor = "#0081c9";
@@ -228,13 +229,15 @@ function settings() {
 				$("#gear")[0].height = "16";
 			}
 		}, 200);
-		setTimeout(() => tog.click(), 500);
+		setTimeout(() => {
+			tog.click();
+		}, 500);
 	}
 }
 
 function returnLetterGrade(inp) {
-	inp = inp.slice(0, inp.length - 1);
-	out = Math.round(parseFloat(inp));
+	inp = inp.slice(0, -1);
+	out = Math.round(Number.parseFloat(inp));
 	if (out >= 98) {
 		return "A+";
 	} else if (out >= 95) {
@@ -265,29 +268,28 @@ function returnLetterGrade(inp) {
 }
 
 function showLetterGrade() {
-	var h3 = $("h3");
+	const h3 = $("h3");
 	for (let i = 0; i < h3.length; i++) {
 		if (
 			i % 2 == 0 &&
 			i != h3.length - 1 &&
 			h3[i + 1].className == "showGrade" &&
-			h3[i + 1].innerHTML.indexOf("&nbsp;") < 0
+			!h3[i + 1].innerHTML.includes("&nbsp;") &&
+			!h3[i + 1].innerHTML.endsWith(")")
 		) {
-			if (h3[i + 1].innerHTML[h3[i + 1].innerHTML.length - 1] !== ")") {
-				h3[i + 1].innerHTML +=
-					" (" + returnLetterGrade(h3[i + 1].innerHTML) + ")";
-			}
+			h3[i + 1].innerHTML +=
+				" (" + returnLetterGrade(h3[i + 1].innerHTML) + ")";
 		}
 	}
 }
 
 function gpa() {
-	if (!!$("#gpaSVG")[0]) {
+	if ($("#gpaSVG")[0]) {
 		$("#gpaSVG")[0].remove();
-		if (!!$("#gpaText")[0]) $("#gpaText")[0].remove();
+		if ($("#gpaText")[0]) $("#gpaText")[0].remove();
 	}
 	if (!showGPA) return;
-	var gpaHTML =
+	const gpaHTML =
 		`
   <svg id="gpaSVG" viewBox="0 0 200 200" style="width: 40px; height: 40px; float: right; stroke-width: 8px" data-value="` +
 		gpaInt +
@@ -303,19 +305,19 @@ function gpa() {
 		`" d="M41 149.5a77 77 0 1 1 117.93 0" fill="none" stroke-dasharray="350" stroke-dashoffset="350"/>
   </svg>`;
 
-	var textArea = $("#textArea")[0];
+	const textArea = $("#textArea")[0];
 	if (gpaInt) textArea.insertAdjacentHTML("beforeend", gpaHTML);
 	$("#gpaText")[0].x.baseVal[0].valueInSpecifiedUnits =
 		61 - $("#gpaText")[0].getBoundingClientRect().width;
 
-	let meters = document.querySelectorAll("svg[data-value] .meter");
-	meters.forEach((path) => {
-		let length = path.getTotalLength();
-		let value = parseInt(path.parentNode.getAttribute("data-value"));
-		let to = length * ((5 - value) / 5);
+	const meters = document.querySelectorAll("svg[data-value] .meter");
+	for (const path of meters) {
+		const length = path.getTotalLength();
+		const value = Number.parseInt(path.parentNode.dataset.value);
+		const to = length * ((5 - value) / 5);
 		path.getBoundingClientRect();
 		path.style.strokeDashoffset = Math.max(0, to);
-	});
+	}
 }
 
 function content(): void {
@@ -338,35 +340,34 @@ function content(): void {
 	}
 
 	document
-		.getElementById("performance")
-		.getElementsByClassName("ch col-md-4")[0].style.width = "25%";
-		
-	document.getElementsByClassName("bb-tile-header ng-binding")[0].innerText =
+		.querySelector("#performance")
+		.querySelectorAll(".ch.col-md-4")[0].style.width = "25%";
+
+	document.querySelectorAll(".bb-tile-header.ng-binding")[0].innerText =
 		"Attendance";
 
-
-	var innerText = $("#gradesText")[0];
-	var h3 = $("h3");
-	var grades = [];
-	var gradesRecord = [];
-	var lastChecked;
-	if (typeof localStorage.getItem("grades") != "string") {
-		localStorage.setItem("grades", JSON.stringify(grades));
-	} else {
+	const innerText = $("#gradesText")[0];
+	const h3 = $("h3");
+	let grades = [];
+	let gradesRecord = [];
+	let lastChecked;
+	if (typeof localStorage.getItem("grades") == "string") {
 		grades = JSON.parse(localStorage.getItem("grades"));
-	}
-	if (typeof localStorage.getItem("gradesRecord") != "string") {
-		localStorage.setItem("gradesRecord", JSON.stringify(gradesRecord));
 	} else {
+		localStorage.setItem("grades", JSON.stringify(grades));
+	}
+	if (typeof localStorage.getItem("gradesRecord") == "string") {
 		gradesRecord = JSON.parse(localStorage.getItem("gradesRecord"));
+	} else {
+		localStorage.setItem("gradesRecord", JSON.stringify(gradesRecord));
 	}
 	if (typeof localStorage.getItem("lastChecked") != "string") {
-		localStorage.setItem("lastChecked", new Date().getTime());
+		localStorage.setItem("lastChecked", Date.now());
 	}
 	lastChecked = localStorage.getItem("lastChecked");
-	var currentTime = new Date().getTime();
+	const currentTime = Date.now();
 	localStorage.setItem("lastChecked", currentTime);
-	sinceLastChecked = ((currentTime - lastChecked) / 60000).toFixed(0);
+	sinceLastChecked = ((currentTime - lastChecked) / 60_000).toFixed(0);
 	if (currentTime == lastChecked) {
 		sinceLastChecked = ".";
 	} else if (sinceLastChecked < 60) {
@@ -381,73 +382,75 @@ function content(): void {
 			(sinceLastChecked % 60) +
 			" minutes ago.";
 	}
-	if (parseInt(sinceLastChecked) == 1)
+	if (Number.parseInt(sinceLastChecked) == 1)
 		sinceLastChecked = sinceLastChecked.replace("s", "");
-	if (parseInt(sinceLastChecked) == 0)
+	if (Number.parseInt(sinceLastChecked) == 0)
 		sinceLastChecked = " just seconds ago.";
-	var class_ = [];
-	var grade = [];
+	const class_ = [];
+	const grade = [];
 	for (let i = 0; i < h3.length; i++) {
 		if (
 			i % 2 == 0 &&
 			i != h3.length - 1 &&
 			h3[i + 1].className == "showGrade" &&
-			h3[i + 1].innerHTML.indexOf("&nbsp;") < 0
+			!h3[i + 1].innerHTML.includes("&nbsp;")
 		) {
 			class_.push(h3[i].innerText.split(" -")[0]);
-			grade.push(h3[i + 1].innerHTML.replace(/\s/g, ""));
+			grade.push(h3[i + 1].innerHTML.replaceAll(/\s/g, ""));
 		}
 	}
-	var grades_ = JSON.stringify(grades);
+	let grades_ = JSON.stringify(grades);
 	grades_ = JSON.parse(grades_);
-	for (let i = 0; i < class_.length; i++) {
-		if (typeof grades[i] == "undefined") {
+	for (const [i, element] of class_.entries()) {
+		if (grades[i] === undefined) {
 			grades[i] = {};
 		}
-		if (typeof grades_[i] == "undefined") {
+		if (grades_[i] === undefined) {
 			grades_[i] = {};
 			grades_[i].Class = "";
 			grades_[i].Grade = "";
 		}
-		grades[i].Class = class_[i];
-		grades[i].Grade = parseFloat(grade[i]).toFixed(2) + "%";
+		grades[i].Class = element;
+		grades[i].Grade = Number.parseFloat(grade[i]).toFixed(2) + "%";
 	}
 	// var changes = [];
-	for (let i = 0; i < grades.length; i++) {
+	for (const [i, grade_] of grades.entries()) {
 		if (
 			!!grades_[i].Grade &&
-			grades_[i].Grade.toString().indexOf(grades[i].Grade) < 0
+			!grades_[i].Grade.toString().includes(grade_.Grade)
 		) {
 			changes.push({
-				Class: grades[i].Class,
+				Class: grade_.Class,
 				Old: grades_[i].Grade,
-				New: grades[i].Grade,
+				New: grade_.Grade,
 				Increase:
-					parseFloat(grades[i].Grade) > parseFloat(grades_[i].Grade)
+					Number.parseFloat(grade_.Grade) >
+					Number.parseFloat(grades_[i].Grade)
 						? true
 						: false,
 			});
 			gradesRecord.push({
-				Class: grades[i].Class,
-				Grade: grades[i].Grade,
+				Class: grade_.Class,
+				Grade: grade_.Grade,
 				Date: currentTime,
 			});
 		} else if (
 			!!grades_[i].grade &&
-			grades_[i].grade.toString().indexOf(grades[i].grade) < 0
+			!grades_[i].grade.toString().includes(grade_.grade)
 		) {
 			changes.push({
-				Class: grades[i].Class,
+				Class: grade_.Class,
 				Old: grades_[i].grade,
-				New: grades[i].grade,
+				New: grade_.grade,
 				Increase:
-					parseFloat(grades[i].grade) > parseFloat(grades_[i].grade)
+					Number.parseFloat(grade_.grade) >
+					Number.parseFloat(grades_[i].grade)
 						? true
 						: false,
 			});
 			gradesRecord.push({
-				Class: grades[i].Class,
-				Grade: grades[i].Grade,
+				Class: grade_.Class,
+				Grade: grade_.Grade,
 				Date: currentTime,
 			});
 		}
@@ -457,28 +460,28 @@ function content(): void {
 
 	innerText.style.fontSize = "11.5px";
 	innerText.innerHTML = "";
-	if (changes.length == 0 || changes[0].Old == "") {
+	if (changes.length === 0 || changes[0].Old == "") {
 		innerText.innerHTML =
 			"Your grades are the same as the last time you checked" +
 			sinceLastChecked;
 	} else {
 		let arrow;
-		for (let i = 0; i < changes.length; i++) {
-			arrow = changes[i].Increase ? up_arrow : down_arrow;
+		for (const change_ of changes) {
+			arrow = change_.Increase ? up_arrow : down_arrow;
 			innerText.innerHTML +=
 				"<img width='14' height='14' src=" +
 				arrow +
 				" <b>" +
-				changes[i].Class +
+				change_.Class +
 				"</b> used to be <b>" +
-				changes[i].Old +
+				change_.Old +
 				"</b>, now it's <b>" +
-				changes[i].New +
+				change_.New +
 				"</b>.<br/>";
 		}
 	}
-	var toGPA = {
-		"70": 1.0,
+	const toGPA = {
+		"70": 1,
 		"71": 1.16,
 		"72": 1.33,
 		"73": 1.5,
@@ -509,18 +512,18 @@ function content(): void {
 		"98": 4.71,
 		"99": 4.86,
 	};
-	for (var i = 0; i < grades.length; i++) {
-		if (Math.round(parseFloat(grades[i].Grade)) > 99) {
+	for (const grade_ of grades) {
+		if (Math.round(Number.parseFloat(grade_.Grade)) > 99) {
 			gpaInt += 4.86;
-		} else if (Math.round(parseFloat(grades[i].Grade)) < 70) {
-			gpaInt += 1.0;
+		} else if (Math.round(Number.parseFloat(grade_.Grade)) < 70) {
+			gpaInt += 1;
 		} else {
-			gpaInt += toGPA[Math.round(parseFloat(grades[i].Grade))];
+			gpaInt += toGPA[Math.round(Number.parseFloat(grade_.Grade))];
 		}
-		if (grades[i].Class.indexOf("-H") > -1) gpaInt += 1.0;
+		if (grade_.Class.includes("-H")) gpaInt += 1;
 	}
 	gpaInt /= grades.length;
-	gpaInt = parseFloat(gpaInt.toFixed(2)).toFixed(2);
+	gpaInt = Number.parseFloat(gpaInt.toFixed(2)).toFixed(2);
 }
 
 var close_icon =
