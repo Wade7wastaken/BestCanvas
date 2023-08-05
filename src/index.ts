@@ -1,63 +1,56 @@
-var ran = false;
-var showGPA = true;
-var gaugeColor = "#0081c9";
-var inSettings;
-var currentHTML;
-var col;
-var gpaInt;
-var sinceLastChecked;
-var changes = [];
+import "./style.css";
+import html from "./html/content.html";
 
-function ready() {
-	if (
-		typeof $(".muted")[0] != "undefined" &&
-		typeof $(".ch.col-md-4")[0] != "undefined"
-	) {
+let ran = false;
+let showGPA = true;
+let gaugeColor = "#0081c9";
+let inSettings;
+let currentHTML;
+//let col;
+let gpaInt;
+let sinceLastChecked;
+let changes = [];
+
+// entry point. if the page is fully loaded, run stuff, else wait and try again
+function ready(): void {
+	if ($(".muted")[0] !== undefined && $(".ch.col-md-4")[0] !== undefined) {
 		ran = true;
-		addStyleSheets();
 		content();
 		settings();
 		gpa();
-		showlettergrade();
-		try {
-			setBannerColor();
-		} catch {}
+		showLetterGrade();
+		setBannerColor();
 	} else {
 		setTimeout(ready, 50);
 	}
 }
 
-$(document).ready(() => {
-	document.addEventListener("keydown", (e) => {
-		if (e.which == 34) {
-			e.preventDefault();
-			notebook();
-		}
-	});
-});
-
-function change() {
-	if (typeof $(".muted")[0] != "undefined") {
+// if an element is defined, run some functions, else wait and try again
+function change(): void {
+	if ($(".muted")[0] === undefined) {
+		setTimeout(change, 50);
+	} else {
 		hashchange();
 		settings();
 		gpa();
-		showlettergrade();
-	} else {
-		setTimeout(change, 50);
+		showLetterGrade();
 	}
 }
 
-$(window).bind("hashchange", function () {
-	if (ran && window.location.href.indexOf("myschoolapp.com") > -1) {
+// call change if ran is true and the location includes myschoolapp.com
+addEventListener("hashchange", function () {
+	if (ran && window.location.href.includes("myschoolapp.com")) {
 		change();
 	}
 });
 
 function hashchange() {
-	col = $(".ch.col-md-4");
-	for (var i = 0; i < col.length; i++) {
-		col[i].style.width = "22%";
-	}
+	const col = $(".ch.col-md-4");
+
+	col.each((_, elem) => {
+		elem.style.width = "22%";
+	});
+
 	if (typeof $("#gradesContainer")[0] == "undefined") {
 		col[0].insertAdjacentHTML("afterend", html);
 	} else {
@@ -239,13 +232,6 @@ function settings() {
 	}
 }
 
-function addStyleSheets() {
-	var style = `#gpaText { font-size: 60px } #gpaSVG { position: absolute; bottom: 22px; right: 52px; width: 32px; height: 32px; }#gpaSVG path { will-change: auto; stroke-width: 20px; stroke-miterlimit: round; transition: stroke-dashoffset 850ms ease-in-out; width: 32px; height: 32px; }#settings { background-color: lightgrey; position: fixed; width: 576px; height: 466px; left: calc(50% - 288px); top: calc(50% - 190px); border-radius: 50px; z-index: 3; display: none; }#gear.gear-in { border-radius: 50%; position: absolute; right: 0; margin-right: 25px; margin-top: -15px; opacity: 1; cursor: pointer; }#gear.gear-out { border-radius: 50%; -webkit-transition: -webkit-transform .8s ease-in-out; transition: .8s ease-in-out; position: absolute; right: 0; margin-right: 20px; margin-top: -20px; opacity: 0.6; cursor: pointer; }#gear.gear-out:hover { -webkit-transform: rotate(360deg); transform: rotate(360deg); opacity: 1; }`;
-	var sheet = document.createElement("style");
-	sheet.innerHTML = style;
-	sheet.parentNode = document.head;
-}
-
 function returnLetterGrade(inp) {
 	inp = inp.slice(0, inp.length - 1);
 	out = Math.round(parseFloat(inp));
@@ -278,7 +264,7 @@ function returnLetterGrade(inp) {
 	}
 }
 
-function showlettergrade() {
+function showLetterGrade() {
 	var h3 = $("h3");
 	for (let i = 0; i < h3.length; i++) {
 		if (
@@ -332,53 +318,33 @@ function gpa() {
 	});
 }
 
-var html = `
-<div class="ch col-md-4" id="gradesContainer" style='width: 30%;'>
-   <section id="grades" class="bb-tile">
-      <div class="bb-tile-title" data-toggle="collapse" data-target="#gradesCollapse">
-         <div class="bb-tile-header-with-content">
-            <h2 class="bb-tile-header">Grade Changes</h2>
-         </div>
-         <div class="bb-tile-header-column-tools">
-            <div class="bb-tile-tools"><button type="button" class="fa fa-chevron-down bb-tile-chevron"></button><button id='gradesPanelToggle' type="button" class="fa fa-chevron-up bb-tile-chevron"></button></div>
-         </div>
-      </div>
-      <div id="gradesCollapse" class="bb-tile-content collapse in" aria-expanded="true" aria-hidden="false">
-         <div class="bb-tile-content-section" id="textArea">
-            <div class="row mb-15">
-               <div class="col-md-12">
-                  <div class="muted" id="gradesText">
-
-                  </div>
-               </div>
-               <br><br><br>
-               <div class="row">
-                  <div class="col-md-12 ml-15"></div>
-               </div>
-            </div>
-         </div>
-      </div>
-   </section>
-</div>`;
-
-function content() {
+function content(): void {
 	if (!localStorage.getItem("reset")) {
 		localStorage.setItem("reset", "done");
 		localStorage.setItem("grades", "[]");
 	}
 	gpaInt = 0;
-	col = $(".ch.col-md-4");
-	for (var i = 0; i < col.length; i++) {
-		col[i].style.width = "22%";
-	}
-	if (typeof $("#gradesContainer")[0] == "undefined")
+	const col = $(".ch.col-md-4");
+
+	if (!col[0]) throw new Error("Couldn't find tiles!");
+
+	col.each((_, elem) => {
+		elem.style.width = "22%";
+	});
+
+	// if the grades container doesn't exist
+	if ($("#gradesContainer")[0] === undefined) {
 		col[0].insertAdjacentHTML("afterend", html);
-	else $("#gradesContainer")[0].style.width = "30%";
+	}
+
 	document
 		.getElementById("performance")
 		.getElementsByClassName("ch col-md-4")[0].style.width = "25%";
+		
 	document.getElementsByClassName("bb-tile-header ng-binding")[0].innerText =
 		"Attendance";
+
+
 	var innerText = $("#gradesText")[0];
 	var h3 = $("h3");
 	var grades = [];

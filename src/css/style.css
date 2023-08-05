@@ -1,0 +1,60 @@
+#gpaText {
+	font-size: 60px;
+}
+
+#gpaSVG {
+	position: absolute;
+	bottom: 22px;
+	right: 52px;
+	width: 32px;
+	height: 32px;
+}
+
+#gpaSVG path {
+	will-change: auto;
+	stroke-width: 20px;
+	stroke-miterlimit: round;
+	transition: stroke-dashoffset 850ms ease-in-out;
+	width: 32px;
+	height: 32px;
+}
+
+#settings {
+	background-color: lightgrey;
+	position: fixed;
+	width: 576px;
+	height: 466px;
+	left: calc(50% - 288px);
+	top: calc(50% - 190px);
+	border-radius: 50px;
+	z-index: 3;
+	display: none;
+}
+
+#gear.gear-in {
+	border-radius: 50%;
+	position: absolute;
+	right: 0;
+	margin-right: 25px;
+	margin-top: -15px;
+	opacity: 1;
+	cursor: pointer;
+}
+
+#gear.gear-out {
+	border-radius: 50%;
+	-webkit-transition: -webkit-transform 0.8s ease-in-out;
+	transition: 0.8s ease-in-out;
+	position: absolute;
+	right: 0;
+	margin-right: 20px;
+	margin-top: -20px;
+	opacity: 0.6;
+	cursor: pointer;
+}
+
+#gear.gear-out:hover {
+	-webkit-transform: rotate(360deg);
+	transform: rotate(360deg);
+	opacity: 1;
+}

@@ -11,17 +11,20 @@
 		"browser": true,
 		"jquery": true
 	},
-	"plugins": ["@typescript-eslint", "import", "unicorn"],
+	"plugins": ["@typescript-eslint", "import", "unicorn", "jquery"],
 	"extends": [
 		"eslint:recommended",
 		"plugin:@typescript-eslint/eslint-recommended",
 		"plugin:@typescript-eslint/strict-type-checked",
 		"plugin:@typescript-eslint/stylistic-type-checked",
 		"plugin:@typescript-eslint/eslint-recommended",
+		"plugin:jquery/deprecated",
 		"plugin:unicorn/recommended",
 		"prettier"
 	],
 	"rules": {
+		"eqeqeq": ["error", "smart"],
+
 		// TypeScript Rules
 		"@typescript-eslint/explicit-function-return-type": [
 			"warn",

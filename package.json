@@ -6,6 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "webpack",
+		"build:watch": "webpack --watch",
 		"lint": "eslint .",
 		"prettier:write": "prettier --write ./src"
 	},
@@ -16,14 +17,20 @@
 		"@types/node": "^20.4.2",
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
 		"@typescript-eslint/parser": "^6.0.0",
+		"css-loader": "^6.8.1",
 		"eslint": "^8.45.0",
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-import": "^2.27.5",
+		"eslint-plugin-jquery": "^1.5.1",
 		"eslint-plugin-unicorn": "^48.0.0",
 		"prettier": "^3.0.0",
+		"style-loader": "^3.3.3",
 		"ts-loader": "^9.4.4",
 		"typescript": "^5.1.6",
 		"webpack": "^5.88.2",
 		"webpack-cli": "^5.1.4"
+	},
+	"dependencies": {
+		"html-loader": "^4.2.0"
 	}
 }
