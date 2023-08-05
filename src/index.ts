@@ -1,15 +1,18 @@
-import "./style.css";
+import "./css/style.css";
+import { getFirstElementSafe } from "./helpers/jQueryHelpers";
+import { initLocalStorage } from "./helpers/localStorageHelpers";
 import html from "./html/content.html";
+import { TGrade, TGradeRecord } from "./types";
 
 let ran = false;
 let showGPA = true;
 let gaugeColor = "#0081c9";
-let inSettings;
-let currentHTML;
+let inSettings: boolean;
+let currentHTML: string;
 //let col;
-let gpaInt;
-let sinceLastChecked;
-const changes = [];
+let gpaInt: string;
+let sinceLastChecked: string;
+const changes: { Class: any; Old: string; New: any; Increase: boolean }[] = [];
 
 // entry point. if the page is fully loaded, run stuff, else wait and try again
 function ready(): void {
@@ -52,37 +55,37 @@ function hashchange() {
 	});
 
 	if ($("#gradesContainer")[0] === undefined) {
-		col[0].insertAdjacentHTML("afterend", html);
+		//col[0].insertAdjacentHTML("afterend", html);
 	} else {
-		$("#gradesContainer")[0].style.width = "30%";
+		//$("#gradesContainer")[0].style.width = "30%";
 	}
 	const innerTxt = $("#gradesText")[0];
-	innerTxt.style.fontSize = "11.5px";
-	innerTxt.innerHTML = "";
-	if (changes.length === 0 || changes[0].Old == "") {
-		innerTxt.innerHTML =
-			"Your grades are the same as the last time you checked" +
-			sinceLastChecked;
+	//innerTxt.style.fontSize = "11.5px";
+	//innerTxt.innerHTML = "";
+	if (changes.length === 0 || changes[0]?.Old == "") {
+		//innerTxt.innerHTML =
+		//"Your grades are the same as the last time you checked" +
+		//sinceLastChecked;
 	} else {
 		let arrow;
 		for (const change_ of changes) {
 			arrow = change_.Increase ? up_arrow : down_arrow;
-			innerTxt.innerHTML +=
-				"<img width='14' height='14' src=" +
-				arrow +
-				" <b>" +
-				change_.Class +
-				"</b> used to be <b>" +
-				change_.Old +
-				"</b>, now it's <b>" +
-				change_.New +
-				"</b>.<br/>";
+			//innerTxt.innerHTML +=
+			//"<img width='14' height='14' src=" +
+			//arrow +
+			//" <b>" +
+			//change_.Class +
+			//"</b> used to be <b>" +
+			//change_.Old +
+			//"</b>, now it's <b>" +
+			//change_.New +
+			//"</b>.<br/>";
 		}
 	}
 }
 
 function setBannerColor() {
-	function hexToRgb(hex) {
+	/*function hexToRgb(hex) {
 		hex = hex.replace(
 			/^#?([\da-f])([\da-f])([\da-f])$/i,
 			function (m, r, g, b) {
@@ -99,14 +102,14 @@ function setBannerColor() {
 			: null;
 	}
 
-	const colors = [];
+	const colors: {r: number, g: number, b: number}[] = [];
 
-	colors[0] = hexToRgb(localStorage.getItem("gaugeColor"));
+	//colors[0] = hexToRgb(localStorage.getItem("gaugeColor"));
 
-	function createColor(num, r, g, b) {
-		colors[num].r = colors[0].r + r;
-		colors[num].g = colors[0].g + g;
-		colors[num].b = colors[0].b + b;
+	function createColor(num: number, r: number, g: number, b: number) {
+		//colors[num].r = colors[0].r + r;
+		//colors[num].g = colors[0].g + g;
+		//colors[num].b = colors[0].b + b;
 	}
 
 	for (var i = 1; i < 10; i++) {
@@ -114,35 +117,36 @@ function setBannerColor() {
 	}
 
 	colors[1] = colors[0];
-	createColor(2, 30, 30, 30); /*Calendar Color*/
-	colors[3] = { r: 0, g: 0, b: 0 }; /*No Idea*/
-	colors[4] = { r: 0, g: 0, b: 0 }; /*No Idea*/
-	colors[5] = colors[0]; /*No Idea*/
-	createColor(6, 90, 90, 90); /*Selected Border*/
-	colors[7] = colors[6]; /*Bottom gradient color*/
-	createColor(8, 230, 230, 230); /*Top gradient color*/
+	createColor(2, 30, 30, 30); //Calendar Color
+	colors[3] = { r: 0, g: 0, b: 0 }; //No Idea
+	colors[4] = { r: 0, g: 0, b: 0 }; //No Idea
+	colors[5] = colors[0]; //No Idea
+	createColor(6, 90, 90, 90); //Selected Border
+	colors[7] = colors[6]; //Bottom gradient color
+	createColor(8, 230, 230, 230); //Top gradient color
 	colors[9] = colors[8];
 
 	const original =
-		colors[0].r == 0 && colors[0].g == 129 && colors[0].b == 201;
+		colors[0]?.r == 0 && colors[0].g == 129 && colors[0].b == 201;
 
 	for (var i = 0; i < 10; i++) {
-		colors[i].r > 255 ? (colors[i].r = 255) : null;
-		colors[i].g > 255 ? (colors[i].g = 255) : null;
-		colors[i].b > 255 ? (colors[i].b = 255) : null;
+		colors[i]?.r > 255 ? (colors[i].r = 255) : null;
+		colors[i]?.g > 255 ? (colors[i].g = 255) : null;
+		colors[i]?.b > 255 ? (colors[i].b = 255) : null;
 		colors[i] =
 			"rgb(" + colors[i].r + "," + colors[i].g + "," + colors[i].b + ")";
 	}
 
-	if (original) {
-		$(
-			"#app-style"
-		)[0].children[0].children[0].innerHTML = `.pri-100-fgc, .pri-100-fgc-hover:hover { color: #004a97 !important; }.pri-100-bgc, .pri-100-bgc-hover:hover { background-color: #004a97 !important; }.pri-100-boxshadow, .pri-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #004a97; -webkit-box-shadow: 1px 1px 3px #004a97; box-shadow: 1px 1px 3px #004a97; }.pri-100-bordercolor, .pri-100-bordercolor-hover:hover { border-color: #004a97; }.pri-75-fgc, .pri-75-fgc-hover:hover { color: #4077b1 !important; }.pri-75-bgc, .pri-75-bgc-hover:hover { background-color: #4077b1 !important; }.pri-75-boxshadow, .pri-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #4077b1; -webkit-box-shadow: 1px 1px 3px #4077b1; box-shadow: 1px 1px 3px #4077b1; }.pri-75-bordercolor, .pri-75-bordercolor-hover:hover { border-color: #4077b1; }.pri-50-fgc, .pri-50-fgc-hover:hover { color: #80a4cb !important; }.pri-50-bgc, .pri-50-bgc-hover:hover { background-color: #80a4cb !important; }.pri-50-boxshadow, .pri-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #80a4cb; -webkit-box-shadow: 1px 1px 3px #80a4cb; box-shadow: 1px 1px 3px #80a4cb; }.pri-50-bordercolor, .pri-50-bordercolor-hover:hover { border-color: #80a4cb; }.pri-25-fgc, .pri-25-fgc-hover:hover { color: #bfd2e5 !important; }.pri-25-bgc, .pri-25-bgc-hover:hover { background-color: #bfd2e5 !important; }.pri-25-boxshadow, .pri-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #bfd2e5; -webkit-box-shadow: 1px 1px 3px #bfd2e5; box-shadow: 1px 1px 3px #bfd2e5; }.pri-25-bordercolor, .pri-25-bordercolor-hover:hover { border-color: #bfd2e5; }.pri-15-fgc, .pri-15-fgc-hover:hover { color: #d9e4ef !important; }.pri-15-bgc, .pri-15-bgc-hover:hover { background-color: #d9e4ef !important; }.pri-15-boxshadow, .pri-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #d9e4ef; -webkit-box-shadow: 1px 1px 3px #d9e4ef; box-shadow: 1px 1px 3px #d9e4ef; }.pri-15-bordercolor, .pri-15-bordercolor-hover:hover { border-color: #d9e4ef; }.sec-100-fgc, .sec-100-fgc-hover:hover { color: #65b2e9 !important; }.sec-100-bgc, .sec-100-bgc-hover:hover { background-color: #65b2e9 !important; }.sec-100-boxshadow, .sec-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #65b2e9; -webkit-box-shadow: 1px 1px 3px #65b2e9; box-shadow: 1px 1px 3px #65b2e9; }.sec-100-bordercolor, .sec-100-bordercolor-hover:hover { border-color: #65b2e9; }.sec-75-fgc, .sec-75-fgc-hover:hover { color: #8cc5ee !important; }.sec-75-bgc, .sec-75-bgc-hover:hover { background-color: #8cc5ee !important; }.sec-75-boxshadow, .sec-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #8cc5ee; -webkit-box-shadow: 1px 1px 3px #8cc5ee; box-shadow: 1px 1px 3px #8cc5ee; }.sec-75-bordercolor, .sec-75-bordercolor-hover:hover { border-color: #8cc5ee; }.sec-50-fgc, .sec-50-fgc-hover:hover { color: #b2d8f4 !important; }.sec-50-bgc, .sec-50-bgc-hover:hover { background-color: #b2d8f4 !important; }.sec-50-boxshadow, .sec-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #b2d8f4; -webkit-box-shadow: 1px 1px 3px #b2d8f4; box-shadow: 1px 1px 3px #b2d8f4; }.sec-50-bordercolor, .sec-50-bordercolor-hover:hover { border-color: #b2d8f4; }.sec-25-fgc, .sec-25-fgc-hover:hover { color: #d8ecfa !important; }.sec-25-bgc, .sec-25-bgc-hover:hover { background-color: #d8ecfa !important; }.sec-25-boxshadow, .sec-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #d8ecfa; -webkit-box-shadow: 1px 1px 3px #d8ecfa; box-shadow: 1px 1px 3px #d8ecfa; }.sec-25-bordercolor, .sec-25-bordercolor-hover:hover { border-color: #d8ecfa; }.sec-15-fgc, .sec-15-fgc-hover:hover { color: #e8f3fc !important; }.sec-15-bgc, .sec-15-bgc-hover:hover { background-color: #e8f3fc !important; }.sec-15-boxshadow, .sec-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #e8f3fc; -webkit-box-shadow: 1px 1px 3px #e8f3fc; box-shadow: 1px 1px 3px #e8f3fc; }.sec-15-bordercolor, .sec-15-bordercolor-hover:hover { border-color: #e8f3fc; }#site-nav ul.topnav > li > a.active,#site-nav ul.topnav > li > a:hover,.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { background-repeat: repeat-x;   /*Repeat the gradient */background-image: -moz-linear-gradient(top, #d8ecfa 0%, #b2d8f4 100%);  /*FF3.6+ */background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d8ecfa), color-stop(100%,#b2d8f4));   /*Chrome,Safari4+ */background-image: -webkit-linear-gradient(top, #d8ecfa 0%,#b2d8f4 100%);   /*Chrome 10+,Safari 5.1+ */background-image: -ms-linear-gradient(top, #d8ecfa 0%,#b2d8f4 100%);   /*IE10+ */background-image: -o-linear-gradient(top, #d8ecfa 0%,#b2d8f4 100%);  /*Opera 11.10+ */filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d8ecfa', endColorstr='#b2d8f4',GradientType=0 );   /*IE6-9 */background-image: linear-gradient(top, #d8ecfa 0%,#b2d8f4 100%);   /*W3C */}.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { border-color: #8cc5ee;}.btn-primary {background-repeat: repeat-x;background-color: #004a97;background-image: -moz-linear-gradient(top, #4077b1, #004a97); background-image: -ms-linear-gradient(top, #4077b1, #004a97);background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#4077b1), to(#004a97));background-image: -webkit-linear-gradient(top, #4077b1, #004a97);background-image: -o-linear-gradient(top, #4077b1, #004a97);background-image: linear-gradient(top, #4077b1, #004a97);}.btn-primary:hover,.btn-primary:active,.btn-primary.active,.btn-primary.disabled,.btn-primary[disabled]     .nav-list > li > a:hover {background-color: #004a97; }.modal-header, .modal-header A {color: #000 !important;}.label:not([class*="label label-"]) {background-color: #004a97 !important;}.subnavbar {background-color: #e8f3fc !important;border-color: #d8ecfa !important;}div.token-input-dropdown ul li.token-input-selected-dropdown-item {background-color: #004a97 !important;}#site-nav UL.topnav > LI > a.active {background-color: #bfd2e5 !important;}#site-nav DIV.subnav UL > li > a.active {background-color: #d8ecfa !important;}#site-mobile-menu.app-mobile-menu, #site-mobile-menu .app-mobile-level {background-color: #004a97 !important;}`;
-	} else {
-		$(
-			"#app-style"
-		)[0].children[0].children[0].innerHTML = `.pri-100-fgc, .pri-100-fgc-hover:hover { color: ${colors[0]} !important; }.pri-100-bgc, .pri-100-bgc-hover:hover { background-color: ${colors[0]} !important; }.pri-100-boxshadow, .pri-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[0]}; -webkit-box-shadow: 1px 1px 3px ${colors[0]}; box-shadow: 1px 1px 3px ${colors[0]}; }.pri-100-bordercolor, .pri-100-bordercolor-hover:hover { border-color: ${colors[0]}; }.pri-75-fgc, .pri-75-fgc-hover:hover { color: ${colors[1]}  !important; }.pri-75-bgc, .pri-75-bgc-hover:hover { background-color:${colors[1]}  !important; }.pri-75-boxshadow, .pri-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[1]}; -webkit-box-shadow: 1px 1px 3px ${colors[1]}; box-shadow: 1px 1px 3px ${colors[1]}; }.pri-75-bordercolor, .pri-75-bordercolor-hover:hover { border-color: ${colors[1]}; }.pri-50-fgc, .pri-50-fgc-hover:hover { color: ${colors[2]}!important; }.pri-50-bgc, .pri-50-bgc-hover:hover { background-color: ${colors[2]} !important; }.pri-50-boxshadow, .pri-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px${colors[2]}; -webkit-box-shadow: 1px 1px 3px ${colors[2]}; box-shadow: 1px 1px 3px ${colors[2]}; }.pri-50-bordercolor, .pri-50-bordercolor-hover:hover { border-color: ${colors[2]}; }.pri-25-fgc, .pri-25-fgc-hover:hover { color: ${colors[3]}!important; }.pri-25-bgc, .pri-25-bgc-hover:hover { background-color:${colors[3]} !important; }.pri-25-boxshadow, .pri-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[3]}; -webkit-box-shadow: 1px 1px 3px ${colors[3]}; box-shadow: 1px 1px 3px ${colors[3]}; }.pri-25-bordercolor, .pri-25-bordercolor-hover:hover { border-color: ${colors[3]}; }.pri-15-fgc, .pri-15-fgc-hover:hover { color: ${colors[4]} !important; }.pri-15-bgc, .pri-15-bgc-hover:hover { background-color: ${colors[4]} !important; }.pri-15-boxshadow, .pri-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[4]}; -webkit-box-shadow: 1px 1px 3px ${colors[4]}; box-shadow: 1px 1px 3px ${colors[4]}; }.pri-15-bordercolor, .pri-15-bordercolor-hover:hover { border-color: ${colors[4]}; }.sec-100-fgc, .sec-100-fgc-hover:hover { color: ${colors[5]} !important; }.sec-100-bgc, .sec-100-bgc-hover:hover { background-color: ${colors[5]} !important; }.sec-100-boxshadow, .sec-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[5]}; -webkit-box-shadow: 1px 1px 3px ${colors[5]}; box-shadow: 1px 1px 3px ${colors[5]}; }.sec-100-bordercolor, .sec-100-bordercolor-hover:hover { border-color: ${colors[5]}; }.sec-75-fgc, .sec-75-fgc-hover:hover { color: ${colors[6]} !important; }.sec-75-bgc, .sec-75-bgc-hover:hover { background-color: ${colors[6]} !important; }.sec-75-boxshadow, .sec-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[6]}; -webkit-box-shadow: 1px 1px 3px ${colors[6]}; box-shadow: 1px 1px 3px ${colors[6]}; }.sec-75-bordercolor, .sec-75-bordercolor-hover:hover { border-color: ${colors[6]}; }.sec-50-fgc, .sec-50-fgc-hover:hover { color: ${colors[7]} !important; }.sec-50-bgc, .sec-50-bgc-hover:hover { background-color: ${colors[7]} !important; }.sec-50-boxshadow, .sec-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[7]}; -webkit-box-shadow: 1px 1px 3px ${colors[7]}; box-shadow: 1px 1px 3px ${colors[7]}; }.sec-50-bordercolor, .sec-50-bordercolor-hover:hover { border-color: ${colors[7]}; }.sec-25-fgc, .sec-25-fgc-hover:hover { color: ${colors[8]} !important; }.sec-25-bgc, .sec-25-bgc-hover:hover { background-color: ${colors[8]} !important; }.sec-25-boxshadow, .sec-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[8]}; -webkit-box-shadow: 1px 1px 3px ${colors[8]}; box-shadow: 1px 1px 3px ${colors[8]}; }.sec-25-bordercolor, .sec-25-bordercolor-hover:hover { border-color: ${colors[8]}; }.sec-15-fgc, .sec-15-fgc-hover:hover { color: ${colors[9]} !important; }.sec-15-bgc, .sec-15-bgc-hover:hover { background-color: ${colors[9]} !important; }.sec-15-boxshadow, .sec-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[9]}; -webkit-box-shadow: 1px 1px 3px ${colors[9]}; box-shadow: 1px 1px 3px ${colors[9]}; }.sec-15-bordercolor, .sec-15-bordercolor-hover:hover { border-color: ${colors[9]}; }#site-nav ul.topnav > li > a.active,#site-nav ul.topnav > li > a:hover,.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { background-repeat: repeat-x;   /*Repeat the gradient */background-image: -moz-linear-gradient(top, ${colors[8]} 0%, ${colors[7]} 100%);  /*FF3.6+ */background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,${colors[8]}), color-stop(100%,${colors[7]}));   /*Chrome,Safari4+ */background-image: -webkit-linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);   /*Chrome 10+,Safari 5.1+ */background-image: -ms-linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);   /*IE10+ */background-image: -o-linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);  /*Opera 11.10+ */filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='${colors[8]}', endColorstr='${colors[7]}',GradientType=0 );   /*IE6-9 */background-image: linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);   /*W3C */}.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { border-color: ${colors[6]};}.btn-primary {background-repeat: repeat-x;background-color: ${colors[0]};background-image: -moz-linear-gradient(top, ${colors[1]}, ${colors[0]}); background-image: -ms-linear-gradient(top, ${colors[1]}, ${colors[0]});background-image: -webkit-gradient(linear, 0 0, 0 100%, from(${colors[1]}), to(${colors[0]}));background-image: -webkit-linear-gradient(top, ${colors[1]}, ${colors[0]});background-image: -o-linear-gradient(top, ${colors[1]}, ${colors[0]});background-image: linear-gradient(top, ${colors[1]}, ${colors[0]});}.btn-primary:hover,.btn-primary:active,.btn-primary.active,.btn-primary.disabled,.btn-primary[disabled]     .nav-list > li > a:hover {background-color: ${colors[0]}; }.modal-header, .modal-header A {color: #ffffff !important;}.label:not([class*="label label-"]) {background-color: ${colors[0]} !important;}.subnavbar {background-color: ${colors[9]} !important;border-color: ${colors[8]} !important;}div.token-input-dropdown ul li.token-input-selected-dropdown-item {background-color: ${colors[0]} !important;}#site-nav UL.topnav > LI > a.active {background-color: ${colors[3]} !important;}#site-nav DIV.subnav UL > li > a.active {background-color: ${colors[8]} !important;}#site-mobile-menu.app-mobile-menu, #site-mobile-menu .app-mobile-level {background-color: ${colors[0]} !important;}`;
-	}
+	//if (original) {
+		//$(
+			//"#app-style"
+		*/
+	//)[0].children[0].children[0].innerHTML = `.pri-100-fgc, .pri-100-fgc-hover:hover { color: #004a97 !important; }.pri-100-bgc, .pri-100-bgc-hover:hover { background-color: #004a97 !important; }.pri-100-boxshadow, .pri-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #004a97; -webkit-box-shadow: 1px 1px 3px #004a97; box-shadow: 1px 1px 3px #004a97; }.pri-100-bordercolor, .pri-100-bordercolor-hover:hover { border-color: #004a97; }.pri-75-fgc, .pri-75-fgc-hover:hover { color: #4077b1 !important; }.pri-75-bgc, .pri-75-bgc-hover:hover { background-color: #4077b1 !important; }.pri-75-boxshadow, .pri-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #4077b1; -webkit-box-shadow: 1px 1px 3px #4077b1; box-shadow: 1px 1px 3px #4077b1; }.pri-75-bordercolor, .pri-75-bordercolor-hover:hover { border-color: #4077b1; }.pri-50-fgc, .pri-50-fgc-hover:hover { color: #80a4cb !important; }.pri-50-bgc, .pri-50-bgc-hover:hover { background-color: #80a4cb !important; }.pri-50-boxshadow, .pri-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #80a4cb; -webkit-box-shadow: 1px 1px 3px #80a4cb; box-shadow: 1px 1px 3px #80a4cb; }.pri-50-bordercolor, .pri-50-bordercolor-hover:hover { border-color: #80a4cb; }.pri-25-fgc, .pri-25-fgc-hover:hover { color: #bfd2e5 !important; }.pri-25-bgc, .pri-25-bgc-hover:hover { background-color: #bfd2e5 !important; }.pri-25-boxshadow, .pri-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #bfd2e5; -webkit-box-shadow: 1px 1px 3px #bfd2e5; box-shadow: 1px 1px 3px #bfd2e5; }.pri-25-bordercolor, .pri-25-bordercolor-hover:hover { border-color: #bfd2e5; }.pri-15-fgc, .pri-15-fgc-hover:hover { color: #d9e4ef !important; }.pri-15-bgc, .pri-15-bgc-hover:hover { background-color: #d9e4ef !important; }.pri-15-boxshadow, .pri-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #d9e4ef; -webkit-box-shadow: 1px 1px 3px #d9e4ef; box-shadow: 1px 1px 3px #d9e4ef; }.pri-15-bordercolor, .pri-15-bordercolor-hover:hover { border-color: #d9e4ef; }.sec-100-fgc, .sec-100-fgc-hover:hover { color: #65b2e9 !important; }.sec-100-bgc, .sec-100-bgc-hover:hover { background-color: #65b2e9 !important; }.sec-100-boxshadow, .sec-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #65b2e9; -webkit-box-shadow: 1px 1px 3px #65b2e9; box-shadow: 1px 1px 3px #65b2e9; }.sec-100-bordercolor, .sec-100-bordercolor-hover:hover { border-color: #65b2e9; }.sec-75-fgc, .sec-75-fgc-hover:hover { color: #8cc5ee !important; }.sec-75-bgc, .sec-75-bgc-hover:hover { background-color: #8cc5ee !important; }.sec-75-boxshadow, .sec-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #8cc5ee; -webkit-box-shadow: 1px 1px 3px #8cc5ee; box-shadow: 1px 1px 3px #8cc5ee; }.sec-75-bordercolor, .sec-75-bordercolor-hover:hover { border-color: #8cc5ee; }.sec-50-fgc, .sec-50-fgc-hover:hover { color: #b2d8f4 !important; }.sec-50-bgc, .sec-50-bgc-hover:hover { background-color: #b2d8f4 !important; }.sec-50-boxshadow, .sec-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #b2d8f4; -webkit-box-shadow: 1px 1px 3px #b2d8f4; box-shadow: 1px 1px 3px #b2d8f4; }.sec-50-bordercolor, .sec-50-bordercolor-hover:hover { border-color: #b2d8f4; }.sec-25-fgc, .sec-25-fgc-hover:hover { color: #d8ecfa !important; }.sec-25-bgc, .sec-25-bgc-hover:hover { background-color: #d8ecfa !important; }.sec-25-boxshadow, .sec-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #d8ecfa; -webkit-box-shadow: 1px 1px 3px #d8ecfa; box-shadow: 1px 1px 3px #d8ecfa; }.sec-25-bordercolor, .sec-25-bordercolor-hover:hover { border-color: #d8ecfa; }.sec-15-fgc, .sec-15-fgc-hover:hover { color: #e8f3fc !important; }.sec-15-bgc, .sec-15-bgc-hover:hover { background-color: #e8f3fc !important; }.sec-15-boxshadow, .sec-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px #e8f3fc; -webkit-box-shadow: 1px 1px 3px #e8f3fc; box-shadow: 1px 1px 3px #e8f3fc; }.sec-15-bordercolor, .sec-15-bordercolor-hover:hover { border-color: #e8f3fc; }#site-nav ul.topnav > li > a.active,#site-nav ul.topnav > li > a:hover,.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { background-repeat: repeat-x;   /*Repeat the gradient */background-image: -moz-linear-gradient(top, #d8ecfa 0%, #b2d8f4 100%);  /*FF3.6+ */background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d8ecfa), color-stop(100%,#b2d8f4));   /*Chrome,Safari4+ */background-image: -webkit-linear-gradient(top, #d8ecfa 0%,#b2d8f4 100%);   /*Chrome 10+,Safari 5.1+ */background-image: -ms-linear-gradient(top, #d8ecfa 0%,#b2d8f4 100%);   /*IE10+ */background-image: -o-linear-gradient(top, #d8ecfa 0%,#b2d8f4 100%);  /*Opera 11.10+ */filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d8ecfa', endColorstr='#b2d8f4',GradientType=0 );   /*IE6-9 */background-image: linear-gradient(top, #d8ecfa 0%,#b2d8f4 100%);   /*W3C */}.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { border-color: #8cc5ee;}.btn-primary {background-repeat: repeat-x;background-color: #004a97;background-image: -moz-linear-gradient(top, #4077b1, #004a97); background-image: -ms-linear-gradient(top, #4077b1, #004a97);background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#4077b1), to(#004a97));background-image: -webkit-linear-gradient(top, #4077b1, #004a97);background-image: -o-linear-gradient(top, #4077b1, #004a97);background-image: linear-gradient(top, #4077b1, #004a97);}.btn-primary:hover,.btn-primary:active,.btn-primary.active,.btn-primary.disabled,.btn-primary[disabled]     .nav-list > li > a:hover {background-color: #004a97; }.modal-header, .modal-header A {color: #000 !important;}.label:not([class*="label label-"]) {background-color: #004a97 !important;}.subnavbar {background-color: #e8f3fc !important;border-color: #d8ecfa !important;}div.token-input-dropdown ul li.token-input-selected-dropdown-item {background-color: #004a97 !important;}#site-nav UL.topnav > LI > a.active {background-color: #bfd2e5 !important;}#site-nav DIV.subnav UL > li > a.active {background-color: #d8ecfa !important;}#site-mobile-menu.app-mobile-menu, #site-mobile-menu .app-mobile-level {background-color: #004a97 !important;}`;
+	//} else {
+	//$(
+	//"#app-style"
+	//)[0].children[0].children[0].innerHTML = `.pri-100-fgc, .pri-100-fgc-hover:hover { color: ${colors[0]} !important; }.pri-100-bgc, .pri-100-bgc-hover:hover { background-color: ${colors[0]} !important; }.pri-100-boxshadow, .pri-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[0]}; -webkit-box-shadow: 1px 1px 3px ${colors[0]}; box-shadow: 1px 1px 3px ${colors[0]}; }.pri-100-bordercolor, .pri-100-bordercolor-hover:hover { border-color: ${colors[0]}; }.pri-75-fgc, .pri-75-fgc-hover:hover { color: ${colors[1]}  !important; }.pri-75-bgc, .pri-75-bgc-hover:hover { background-color:${colors[1]}  !important; }.pri-75-boxshadow, .pri-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[1]}; -webkit-box-shadow: 1px 1px 3px ${colors[1]}; box-shadow: 1px 1px 3px ${colors[1]}; }.pri-75-bordercolor, .pri-75-bordercolor-hover:hover { border-color: ${colors[1]}; }.pri-50-fgc, .pri-50-fgc-hover:hover { color: ${colors[2]}!important; }.pri-50-bgc, .pri-50-bgc-hover:hover { background-color: ${colors[2]} !important; }.pri-50-boxshadow, .pri-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px${colors[2]}; -webkit-box-shadow: 1px 1px 3px ${colors[2]}; box-shadow: 1px 1px 3px ${colors[2]}; }.pri-50-bordercolor, .pri-50-bordercolor-hover:hover { border-color: ${colors[2]}; }.pri-25-fgc, .pri-25-fgc-hover:hover { color: ${colors[3]}!important; }.pri-25-bgc, .pri-25-bgc-hover:hover { background-color:${colors[3]} !important; }.pri-25-boxshadow, .pri-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[3]}; -webkit-box-shadow: 1px 1px 3px ${colors[3]}; box-shadow: 1px 1px 3px ${colors[3]}; }.pri-25-bordercolor, .pri-25-bordercolor-hover:hover { border-color: ${colors[3]}; }.pri-15-fgc, .pri-15-fgc-hover:hover { color: ${colors[4]} !important; }.pri-15-bgc, .pri-15-bgc-hover:hover { background-color: ${colors[4]} !important; }.pri-15-boxshadow, .pri-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[4]}; -webkit-box-shadow: 1px 1px 3px ${colors[4]}; box-shadow: 1px 1px 3px ${colors[4]}; }.pri-15-bordercolor, .pri-15-bordercolor-hover:hover { border-color: ${colors[4]}; }.sec-100-fgc, .sec-100-fgc-hover:hover { color: ${colors[5]} !important; }.sec-100-bgc, .sec-100-bgc-hover:hover { background-color: ${colors[5]} !important; }.sec-100-boxshadow, .sec-100-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[5]}; -webkit-box-shadow: 1px 1px 3px ${colors[5]}; box-shadow: 1px 1px 3px ${colors[5]}; }.sec-100-bordercolor, .sec-100-bordercolor-hover:hover { border-color: ${colors[5]}; }.sec-75-fgc, .sec-75-fgc-hover:hover { color: ${colors[6]} !important; }.sec-75-bgc, .sec-75-bgc-hover:hover { background-color: ${colors[6]} !important; }.sec-75-boxshadow, .sec-75-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[6]}; -webkit-box-shadow: 1px 1px 3px ${colors[6]}; box-shadow: 1px 1px 3px ${colors[6]}; }.sec-75-bordercolor, .sec-75-bordercolor-hover:hover { border-color: ${colors[6]}; }.sec-50-fgc, .sec-50-fgc-hover:hover { color: ${colors[7]} !important; }.sec-50-bgc, .sec-50-bgc-hover:hover { background-color: ${colors[7]} !important; }.sec-50-boxshadow, .sec-50-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[7]}; -webkit-box-shadow: 1px 1px 3px ${colors[7]}; box-shadow: 1px 1px 3px ${colors[7]}; }.sec-50-bordercolor, .sec-50-bordercolor-hover:hover { border-color: ${colors[7]}; }.sec-25-fgc, .sec-25-fgc-hover:hover { color: ${colors[8]} !important; }.sec-25-bgc, .sec-25-bgc-hover:hover { background-color: ${colors[8]} !important; }.sec-25-boxshadow, .sec-25-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[8]}; -webkit-box-shadow: 1px 1px 3px ${colors[8]}; box-shadow: 1px 1px 3px ${colors[8]}; }.sec-25-bordercolor, .sec-25-bordercolor-hover:hover { border-color: ${colors[8]}; }.sec-15-fgc, .sec-15-fgc-hover:hover { color: ${colors[9]} !important; }.sec-15-bgc, .sec-15-bgc-hover:hover { background-color: ${colors[9]} !important; }.sec-15-boxshadow, .sec-15-boxshadow-hover:hover { -moz-box-shadow: 1px 1px 3px ${colors[9]}; -webkit-box-shadow: 1px 1px 3px ${colors[9]}; box-shadow: 1px 1px 3px ${colors[9]}; }.sec-15-bordercolor, .sec-15-bordercolor-hover:hover { border-color: ${colors[9]}; }#site-nav ul.topnav > li > a.active,#site-nav ul.topnav > li > a:hover,.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { background-repeat: repeat-x;   /*Repeat the gradient */background-image: -moz-linear-gradient(top, ${colors[8]} 0%, ${colors[7]} 100%);  /*FF3.6+ */background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,${colors[8]}), color-stop(100%,${colors[7]}));   /*Chrome,Safari4+ */background-image: -webkit-linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);   /*Chrome 10+,Safari 5.1+ */background-image: -ms-linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);   /*IE10+ */background-image: -o-linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);  /*Opera 11.10+ */filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='${colors[8]}', endColorstr='${colors[7]}',GradientType=0 );   /*IE6-9 */background-image: linear-gradient(top, ${colors[8]} 0%,${colors[7]} 100%);   /*W3C */}.subnavbar .nav > .active > a,.subnavbar .nav > .active > a:hover { border-color: ${colors[6]};}.btn-primary {background-repeat: repeat-x;background-color: ${colors[0]};background-image: -moz-linear-gradient(top, ${colors[1]}, ${colors[0]}); background-image: -ms-linear-gradient(top, ${colors[1]}, ${colors[0]});background-image: -webkit-gradient(linear, 0 0, 0 100%, from(${colors[1]}), to(${colors[0]}));background-image: -webkit-linear-gradient(top, ${colors[1]}, ${colors[0]});background-image: -o-linear-gradient(top, ${colors[1]}, ${colors[0]});background-image: linear-gradient(top, ${colors[1]}, ${colors[0]});}.btn-primary:hover,.btn-primary:active,.btn-primary.active,.btn-primary.disabled,.btn-primary[disabled]     .nav-list > li > a:hover {background-color: ${colors[0]}; }.modal-header, .modal-header A {color: #ffffff !important;}.label:not([class*="label label-"]) {background-color: ${colors[0]} !important;}.subnavbar {background-color: ${colors[9]} !important;border-color: ${colors[8]} !important;}div.token-input-dropdown ul li.token-input-selected-dropdown-item {background-color: ${colors[0]} !important;}#site-nav UL.topnav > LI > a.active {background-color: ${colors[3]} !important;}#site-nav DIV.subnav UL > li > a.active {background-color: ${colors[8]} !important;}#site-mobile-menu.app-mobile-menu, #site-mobile-menu .app-mobile-level {background-color: ${colors[0]} !important;}`;
+	//}*/
 }
 
 function settings() {
@@ -154,7 +158,7 @@ function settings() {
 	inSettings = false;
 	const innerText = $("#gradesText")[0];
 	if (typeof localStorage.getItem("gaugeColor") == "string") {
-		gaugeColor = localStorage.getItem("gaugeColor");
+		gaugeColor = localStorage.getItem("gaugeColor") ?? "";
 	} else {
 		localStorage.setItem("gaugeColor", "#0081c9");
 	}
@@ -166,10 +170,10 @@ function settings() {
 		gear_icon +
 		` width='32' height='32'>`;
 	if ($("#gear")[0] === undefined)
-		textArea.insertAdjacentHTML("beforeend", gearHTML);
-	$("#gear")[0].addEventListener("click", settingsClicked, false);
+		textArea?.insertAdjacentHTML("beforeend", gearHTML);
+	$("#gear")[0]?.addEventListener("click", settingsClicked, false);
 	function addEventListeners() {
-		$("#gpaOpt")[0].addEventListener("click", () => {
+		$("#gpaOpt")[0]?.addEventListener("click", () => {
 			showGPA = !showGPA;
 			if (showGPA) {
 				localStorage.setItem("showGPA", "true");
@@ -178,26 +182,26 @@ function settings() {
 			}
 			gpa();
 		});
-		$("#colorPicker")[0].addEventListener(
+		$("#colorPicker")[0]?.addEventListener(
 			"change",
 			() => {
-				if ($("#gpaText")[0])
-					$("#gpaText")[0].style.color = $("#colorPicker")[0].value;
-				if ($("#meter")[0])
-					$("#meter")[0].style.stroke = $("#colorPicker")[0].value;
-				localStorage.setItem("gaugeColor", $("#colorPicker")[0].value);
-				gaugeColor = $("#colorPicker")[0].value;
+				//if ($("#gpaText")[0])
+				//$("#gpaText")[0].style.color = $("#colorPicker")[0].value;
+				//if ($("#meter")[0])
+				//$("#meter")[0].style.stroke = $("#colorPicker")[0].value;
+				//localStorage.setItem("gaugeColor", $("#colorPicker")[0].value);
+				//gaugeColor = $("#colorPicker")[0].value;
 				setBannerColor();
 			},
 			false
 		);
-		$("#defaultColor")[0].addEventListener(
+		$("#defaultColor")[0]?.addEventListener(
 			"click",
 			() => {
-				if ($("#gpaText")[0]) $("#gpaText")[0].style.color = "#0081c9";
-				if ($("#meter")[0]) $("#meter")[0].style.stroke = "#0081c9";
+				//if ($("#gpaText")[0]) $("#gpaText")[0].style.color = "#0081c9";
+				//if ($("#meter")[0]) $("#meter")[0].style.stroke = "#0081c9";
 				localStorage.setItem("gaugeColor", "#0081c9");
-				$("#colorPicker")[0].value = "#0081c9";
+				//$("#colorPicker")[0].value = "#0081c9";
 				gaugeColor = "#0081c9";
 				setBannerColor();
 			},
@@ -205,7 +209,7 @@ function settings() {
 		);
 	}
 	function settingsClicked() {
-		tog.click();
+		/*tog?.click();
 		setTimeout(function () {
 			if (inSettings) {
 				inSettings = false;
@@ -230,14 +234,14 @@ function settings() {
 			}
 		}, 200);
 		setTimeout(() => {
-			tog.click();
-		}, 500);
+			tog?.click();
+		}, 500);*/
 	}
 }
 
-function returnLetterGrade(inp) {
+function returnLetterGrade(inp: string) {
 	inp = inp.slice(0, -1);
-	out = Math.round(Number.parseFloat(inp));
+	const out = Math.round(Number.parseFloat(inp));
 	if (out >= 98) {
 		return "A+";
 	} else if (out >= 95) {
@@ -273,20 +277,20 @@ function showLetterGrade() {
 		if (
 			i % 2 == 0 &&
 			i != h3.length - 1 &&
-			h3[i + 1].className == "showGrade" &&
-			!h3[i + 1].innerHTML.includes("&nbsp;") &&
-			!h3[i + 1].innerHTML.endsWith(")")
+			h3[i + 1]?.className == "showGrade" &&
+			!h3[i + 1]?.innerHTML.includes("&nbsp;") &&
+			!h3[i + 1]?.innerHTML.endsWith(")")
 		) {
-			h3[i + 1].innerHTML +=
-				" (" + returnLetterGrade(h3[i + 1].innerHTML) + ")";
+			//h3[i + 1].innerHTML +=
+			//" (" + returnLetterGrade(h3[i + 1]?.innerHTML) + ")";
 		}
 	}
 }
 
 function gpa() {
 	if ($("#gpaSVG")[0]) {
-		$("#gpaSVG")[0].remove();
-		if ($("#gpaText")[0]) $("#gpaText")[0].remove();
+		$("#gpaSVG")[0]?.remove();
+		if ($("#gpaText")[0]) $("#gpaText")[0]?.remove();
 	}
 	if (!showGPA) return;
 	const gpaHTML =
@@ -305,127 +309,105 @@ function gpa() {
 		`" d="M41 149.5a77 77 0 1 1 117.93 0" fill="none" stroke-dasharray="350" stroke-dashoffset="350"/>
   </svg>`;
 
-	const textArea = $("#textArea")[0];
+	/*const textArea = $("#textArea")[0];
 	if (gpaInt) textArea.insertAdjacentHTML("beforeend", gpaHTML);
 	$("#gpaText")[0].x.baseVal[0].valueInSpecifiedUnits =
-		61 - $("#gpaText")[0].getBoundingClientRect().width;
+		61 - $("#gpaText")[0].getBoundingClientRect().width;*/
 
 	const meters = document.querySelectorAll("svg[data-value] .meter");
-	for (const path of meters) {
+
+	// eslint-disable-next-line unicorn/no-array-for-each
+	/*meters.forEach((path) => {
 		const length = path.getTotalLength();
 		const value = Number.parseInt(path.parentNode.dataset.value);
 		const to = length * ((5 - value) / 5);
 		path.getBoundingClientRect();
 		path.style.strokeDashoffset = Math.max(0, to);
-	}
+	})*/
 }
 
 function content(): void {
 	if (!localStorage.getItem("reset")) {
 		localStorage.setItem("reset", "done");
-		localStorage.setItem("grades", "[]");
 	}
-	gpaInt = 0;
-	const col = $(".ch.col-md-4");
+	gpaInt = "0";
 
-	if (!col[0]) throw new Error("Couldn't find tiles!");
-
-	col.each((_, elem) => {
-		elem.style.width = "22%";
+	// reduce the with on all cards to make room for a new one
+	$(".ch.col-md-4").each((_, elem) => {
+		elem.classList.replace("col-md-4", "col-md-3");
 	});
 
-	// if the grades container doesn't exist
-	if ($("#gradesContainer")[0] === undefined) {
-		col[0].insertAdjacentHTML("afterend", html);
+	// if the grades container doesn't exist, insert the html after the performance tile
+	if ($("#gradesContainer").exists()) {
+		$("div#performance")[0]?.insertAdjacentHTML("afterend", html);
 	}
 
-	document
-		.querySelector("#performance")
-		.querySelectorAll(".ch.col-md-4")[0].style.width = "25%";
-
-	document.querySelectorAll(".bb-tile-header.ng-binding")[0].innerText =
-		"Attendance";
-
-	const innerText = $("#gradesText")[0];
 	const h3 = $("h3");
-	let grades = [];
-	let gradesRecord = [];
-	let lastChecked;
-	if (typeof localStorage.getItem("grades") == "string") {
-		grades = JSON.parse(localStorage.getItem("grades"));
-	} else {
-		localStorage.setItem("grades", JSON.stringify(grades));
-	}
-	if (typeof localStorage.getItem("gradesRecord") == "string") {
-		gradesRecord = JSON.parse(localStorage.getItem("gradesRecord"));
-	} else {
-		localStorage.setItem("gradesRecord", JSON.stringify(gradesRecord));
-	}
-	if (typeof localStorage.getItem("lastChecked") != "string") {
-		localStorage.setItem("lastChecked", Date.now());
-	}
-	lastChecked = localStorage.getItem("lastChecked");
+
+	const grades = initLocalStorage<TGrade[]>("grades", []);
+	const gradesRecord = initLocalStorage<TGradeRecord[]>("gradesRecord", []);
+	const lastChecked = initLocalStorage<number>("lastChecked", Date.now());
+
 	const currentTime = Date.now();
-	localStorage.setItem("lastChecked", currentTime);
+
+	localStorage.setItem("lastChecked", JSON.stringify(currentTime));
+
 	sinceLastChecked = ((currentTime - lastChecked) / 60_000).toFixed(0);
-	if (currentTime == lastChecked) {
+	const sinceLastCheckedNumber = (currentTime - lastChecked) / 60_000;
+
+	if (currentTime === lastChecked) {
 		sinceLastChecked = ".";
-	} else if (sinceLastChecked < 60) {
+	} else if (sinceLastCheckedNumber < 60) {
 		sinceLastChecked = " " + sinceLastChecked + " minutes ago.";
-	} else if (sinceLastChecked % 60 == 0) {
-		sinceLastChecked = " " + sinceLastChecked / 60 + " hours ago.";
+	} else if (sinceLastCheckedNumber % 60 === 0) {
+		sinceLastChecked = " " + sinceLastCheckedNumber / 60 + " hours ago.";
 	} else {
 		sinceLastChecked =
 			" " +
-			(sinceLastChecked - (sinceLastChecked % 60)) / 60 +
+			(sinceLastCheckedNumber - (sinceLastCheckedNumber % 60)) / 60 +
 			" hours and " +
-			(sinceLastChecked % 60) +
+			(sinceLastCheckedNumber % 60) +
 			" minutes ago.";
 	}
-	if (Number.parseInt(sinceLastChecked) == 1)
+	if (Number.parseInt(sinceLastChecked) === 1)
 		sinceLastChecked = sinceLastChecked.replace("s", "");
-	if (Number.parseInt(sinceLastChecked) == 0)
+	if (Number.parseInt(sinceLastChecked) === 0)
 		sinceLastChecked = " just seconds ago.";
-	const class_ = [];
-	const grade = [];
+	const class_: string[] = [];
+	const grade: string[] = [];
 	for (let i = 0; i < h3.length; i++) {
 		if (
-			i % 2 == 0 &&
-			i != h3.length - 1 &&
-			h3[i + 1].className == "showGrade" &&
-			!h3[i + 1].innerHTML.includes("&nbsp;")
+			i % 2 === 0 &&
+			i !== h3.length - 1 &&
+			h3[i + 1]?.className === "showGrade" &&
+			!h3[i + 1]?.innerHTML.includes("&nbsp;")
 		) {
-			class_.push(h3[i].innerText.split(" -")[0]);
-			grade.push(h3[i + 1].innerHTML.replaceAll(/\s/g, ""));
+			class_.push(h3[i]?.textContent?.split(" -")[0] ?? "");
+			//grade.push(h3[i + 1]?.textContent?.replaceAll(/\s/g, "") ?? "");
 		}
 	}
-	let grades_ = JSON.stringify(grades);
-	grades_ = JSON.parse(grades_);
+
 	for (const [i, element] of class_.entries()) {
 		if (grades[i] === undefined) {
-			grades[i] = {};
+			//grades[i] = { Class: "", Grade: "" };
+			throw new Error("no");
 		}
-		if (grades_[i] === undefined) {
-			grades_[i] = {};
-			grades_[i].Class = "";
-			grades_[i].Grade = "";
-		}
-		grades[i].Class = element;
-		grades[i].Grade = Number.parseFloat(grade[i]).toFixed(2) + "%";
+		//grades[i].Class = element;
+		//grades[i].Grade = Number.parseFloat(grade[i]).toFixed(2) + "%";
 	}
 	// var changes = [];
 	for (const [i, grade_] of grades.entries()) {
 		if (
-			!!grades_[i].Grade &&
-			!grades_[i].Grade.toString().includes(grade_.Grade)
+			!!grades[i]?.Grade &&
+			!grades[i]?.Grade.toString().includes(grade_.Grade)
 		) {
 			changes.push({
 				Class: grade_.Class,
-				Old: grades_[i].Grade,
+				Old: grades[i]?.Grade ?? "",
 				New: grade_.Grade,
 				Increase:
 					Number.parseFloat(grade_.Grade) >
-					Number.parseFloat(grades_[i].Grade)
+					Number.parseFloat(grades[i]?.Grade ?? "")
 						? true
 						: false,
 			});
@@ -435,16 +417,16 @@ function content(): void {
 				Date: currentTime,
 			});
 		} else if (
-			!!grades_[i].grade &&
-			!grades_[i].grade.toString().includes(grade_.grade)
+			!!grades[i]?.Grade &&
+			!grades[i]?.Grade.toString().includes(grade_.Grade)
 		) {
 			changes.push({
 				Class: grade_.Class,
-				Old: grades_[i].grade,
-				New: grade_.grade,
+				Old: grades[i]?.Grade ?? "",
+				New: grade_.Grade,
 				Increase:
-					Number.parseFloat(grade_.grade) >
-					Number.parseFloat(grades_[i].grade)
+					Number.parseFloat(grade_.Grade) >
+					Number.parseFloat(grades[i]?.Grade ?? "")
 						? true
 						: false,
 			});
@@ -458,9 +440,11 @@ function content(): void {
 	localStorage.setItem("grades", JSON.stringify(grades));
 	localStorage.setItem("gradesRecord", JSON.stringify(gradesRecord));
 
+	const innerText = getFirstElementSafe("#gradesText");
+
 	innerText.style.fontSize = "11.5px";
 	innerText.innerHTML = "";
-	if (changes.length === 0 || changes[0].Old == "") {
+	if (changes.length === 0 || changes[0]?.Old === "") {
 		innerText.innerHTML =
 			"Your grades are the same as the last time you checked" +
 			sinceLastChecked;
@@ -480,53 +464,22 @@ function content(): void {
 				"</b>.<br/>";
 		}
 	}
-	const toGPA = {
-		"70": 1,
-		"71": 1.16,
-		"72": 1.33,
-		"73": 1.5,
-		"74": 1.66,
-		"75": 1.83,
-		"76": 2,
-		"77": 2.11,
-		"78": 2.22,
-		"79": 2.33,
-		"80": 2.44,
-		"81": 2.56,
-		"82": 2.67,
-		"83": 2.78,
-		"84": 2.89,
-		"85": 3,
-		"86": 3.13,
-		"87": 3.25,
-		"88": 3.38,
-		"89": 3.5,
-		"90": 3.63,
-		"91": 3.75,
-		"92": 3.88,
-		"93": 4,
-		"94": 4.14,
-		"95": 4.29,
-		"96": 4.43,
-		"97": 4.57,
-		"98": 4.71,
-		"99": 4.86,
-	};
+
 	for (const grade_ of grades) {
 		if (Math.round(Number.parseFloat(grade_.Grade)) > 99) {
 			gpaInt += 4.86;
 		} else if (Math.round(Number.parseFloat(grade_.Grade)) < 70) {
 			gpaInt += 1;
 		} else {
-			gpaInt += toGPA[Math.round(Number.parseFloat(grade_.Grade))];
+			gpaInt += (1 / 6) * Number.parseFloat(grade_.Grade) - -32 / 3;
 		}
 		if (grade_.Class.includes("-H")) gpaInt += 1;
 	}
-	gpaInt /= grades.length;
-	gpaInt = Number.parseFloat(gpaInt.toFixed(2)).toFixed(2);
+	gpaInt = (Number.parseFloat(gpaInt) / grades.length).toString();
+	gpaInt = Number.parseFloat(Number.parseFloat(gpaInt).toFixed(2)).toFixed(2);
 }
 
-var close_icon =
+const close_icon =
 	"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAE4UlEQVR4nO2cW3baQBBEC473v0uvw/mw5SAzI82jH9Uzfb9yAojuqhuIQfLj8/MTFb5qN/zh0Xi/RIepnp6TB+29byLLdE8fEwcsPS5fDWwQ6+lZuHGGfDXQR7Sn2luAyMETccSzPQSQPnBKII9KR0+FA5+eIBFBrSONt4DTEygffwdUM9QWAEgJZlDPzkIAICUYwSQzKwGAlKAHs6wsBQBSghZMM7IWAEgJrjDPxkMAICUo4ZKJlwBASvCKWxaeAgApAeCcwRP+3+DtLIH37o/jFSAlsMd75wfg/xbwincgltDs+iqA96sAQBSMIgw7Fk8IOd3gCENAWjDsduq49BaQEujAsNNbt7X/A6QEsjDs0nVWcPUBxjAENwvDDtUu734KSAnmYJj9ssOWHwNTgjEYZr7trvVzgJSgD4ZZmzrr+SAoJWiDYcbmrno/CUwJrmGYraujkY+CU4IyDDN1dzP6XUBKcIZhlqFOZr4MSgm+YZhhuIvZbwN3lyB0+YDM18G7ShC+fEDufIDdJFiifED2hJBdJFimfED+jKDVJViqfEDnlLBVJViufEDvnMDVJFiyfED3pNBVJFi2fED/rODoEixdPmBzWnhUCZYvH7C7LiCaBFuUD9heGBJFgm3KB+yvDGKXYKvyAZ9Lw1gl2K58wO/aQDYJtiwf8L04lEWCbcsH/K8OZpDAG9cMvAUA9pbAfXcGAQCCIByg2JlFAIAkECNodmUSACAKRhGqHdkEAMgCEoZuN0YBAMKgBKDciVUAgDSwQWh3YRYAIA6uA+od2AUAyAO8gX72CAIAAYIsEGLmKAIAQQL9IcyskQQAYgQbYcZfogkAcAfMPFuRiAIAnEEzznRLVAEArsCZZukisgCJAJEFYDiT54Bpli6iCsAYOONMt0QUgDlo5tmKRBMgQsARZvwlkgCRgg0zaxQBwgT6QoiZIwgQIsgK9LOzC0AfYAPUOzALQB1cJ7S7sApAG9gElDsxCkAZlBB0u7EJQBeQAlQ7MglAFYwyNLuyCEATiCEUOzMIQBGEE+67ewvgHgABrhl4CsBQ/gMcZ/O4ZeElAEv5pT974ZKJhwBs5V/9nTXm2VgLwFp+y21WmGZkKQB7+T330cYsKysBopQ/cl8tTDKzECBa+TOPkUY9O20BopYv8VgpVDPUFCB6+ZLHmEUtSy0BVilf41ijqGSqIcBq5WsesxfxbKUFWLV8i2O3IpqxpACrl2/5HHeIZS0lwC7lezxXDZHMJQTYrXzP5/zLdPazAuxaPsNzH0x1MCPA7uUfMMww3MWoAFn+GYZZhjoZESDLL8MwU3c3vQJk+dcwzNbVUY8AWX4bDDM2d9UqQJbfB8OsTZ21CJDlj8Ew8213dwJk+XMwzH7Z4ZUAWb4MDDtUu6wJkOXLwrBLsdOSAFm+Dgw7vXX7V4AsXxeG3U4dP2s3OMEQkDYMO/527X118CsMwVhBs+shgPe/fppADPHe+Qv4FiDL98N79y/vtwDvABhwzcBTgCz/P25ZeAmQ5b/jkomHAFl+HfNsrAXI8u8xzchSgCy/HbOsrATI8vsxycxCgCx/HPXstAXI8udRzfCp+ARZvhxqHR2vANJPkOXLo9KRxltAlq+HeLavAqzy+3RWR7Snj8oNvd8QZvG2iPVUewuI9ksVd2W6p38Vz82zLm5PuwAAAABJRU5ErkJggg==";
 
 var gear_icon =

@@ -11,14 +11,13 @@
 		"browser": true,
 		"jquery": true
 	},
-	"plugins": ["@typescript-eslint", "import", "unicorn", "jquery"],
+	"plugins": ["@typescript-eslint", "import", "unicorn"],
 	"extends": [
 		"eslint:recommended",
 		"plugin:@typescript-eslint/eslint-recommended",
 		"plugin:@typescript-eslint/strict-type-checked",
 		"plugin:@typescript-eslint/stylistic-type-checked",
 		"plugin:@typescript-eslint/eslint-recommended",
-		"plugin:jquery/deprecated",
 		"plugin:unicorn/recommended",
 		"prettier"
 	],
