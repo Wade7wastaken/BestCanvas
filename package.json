@@ -5,9 +5,7 @@
 	"main": "./out/index.js",
 	"type": "module",
 	"scripts": {
-		"start": "node out/app.js",
-		"prestart": "npm run build",
-		"build": "tsc",
+		"build": "webpack",
 		"lint": "eslint .",
 		"prettier:write": "prettier --write ./src"
 	},
@@ -22,6 +20,9 @@
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-unicorn": "^48.0.0",
 		"prettier": "^3.0.0",
-		"typescript": "^5.1.6"
+		"ts-loader": "^9.4.4",
+		"typescript": "^5.1.6",
+		"webpack": "^5.88.2",
+		"webpack-cli": "^5.1.4"
 	}
 }
