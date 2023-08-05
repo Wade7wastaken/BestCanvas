@@ -7,6 +7,10 @@
 		"ecmaVersion": "latest",
 		"sourceType": "module"
 	},
+	"env": {
+		"browser": true,
+		"jquery": true
+	},
 	"plugins": ["@typescript-eslint", "import", "unicorn"],
 	"extends": [
 		"eslint:recommended",
@@ -53,6 +57,8 @@
 					"camelCase": true
 				}
 			}
-		]
+		],
+		"unicorn/prevent-abbreviations": "off"
 	}
 }
+
