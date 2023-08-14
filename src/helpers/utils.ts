@@ -1,4 +1,38 @@
-export function panic(message: string): never {
-	alert(message);
+export const panic = (message: string): never => {
+	alert(
+		"OCP: Something has gone wrong. See the developer console for more information."
+	);
 	throw new Error(message);
-}
+};
+
+const OCPDebug = process.env.NODE_ENV === "development";
+
+export const debug = (message: string): void => {
+	if (OCPDebug) console.log(message);
+};
+
+const formatResult = (
+	value: number,
+	unit: string,
+	includeAgo = true
+): string => {
+	return `${Math.round(value)} ${unit}${value === 1 ? "" : "s"}${
+		includeAgo ? " ago" : ""
+	}`;
+};
+
+export const formatDuration = (minutes: number): string => {
+	if (minutes < 1) {
+		return "less than a minute ago";
+	} else if (minutes < 60) {
+		return formatResult(minutes, "minute");
+	} else if (minutes % 60 === 0) {
+		return formatResult(minutes / 60, "hour");
+	} else {
+		return `${formatResult(
+			(minutes - (minutes % 60)) / 60,
+			"hour",
+			false
+		)} and ${formatResult(minutes % 60, "minute")}`;
+	}
+};

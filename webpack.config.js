@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 /** @type {import('webpack').Configuration} */
 const config = {
 	mode: "production",
+	devtool: false,
 	entry: "./src/index.ts",
 	output: {
 		path: resolve(dirname(fileURLToPath(import.meta.url)), "dist"),
