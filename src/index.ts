@@ -1,23 +1,12 @@
+import { contentLoader } from "./contentLoader";
+import { init } from "./init";
 
-import { cont, locationWarning, str } from "./data/strings";
-import { getFirstElementSafe } from "./helpers/jQueryHelpers";
-import { panic } from "./helpers/utils";
+import "./content/styles.css";
+import "./content/appStyles.css";
 
+void (async () => {
+	init();
+	await contentLoader();
 
-
-const domainChecker = (): void => {
-	if (
-		!window.location.href.includes("myschoolapp.com") &&
-		!confirm(str(locationWarning, cont))
-	)
-		panic("Script canceled by user.");
-};
-
-const goToProgress = (): void => {
-	getFirstElementSafe("#topnav-container > ul > li > a").click();
-};
-
-
-
-domainChecker();
-goToProgress();
+	console.log("done");
+})();

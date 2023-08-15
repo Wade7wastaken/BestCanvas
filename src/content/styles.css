@@ -1,0 +1,5 @@
+/*This is to fix the performance card, because when it gets too small, the text
+won't fit.*/
+.fix-performance {
+	max-width: calc(100% - 40px) !important;
+}

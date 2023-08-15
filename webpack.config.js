@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 
 /** @type {import('webpack').Configuration} */
 const config = {
-	mode: "production",
+	mode: "development",
 	devtool: false,
 	entry: "./src/index.ts",
 	output: {
