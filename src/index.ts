@@ -3,7 +3,7 @@ import { calcChanges } from "./extractData";
 import { init } from "./init";
 import { renderChanges } from "./renderChanges";
 
-import "./content/styles.css";
+import "./resources/styles.css";
 
 void (async () => {
 	init();

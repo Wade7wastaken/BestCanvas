@@ -1,5 +1,5 @@
-import tile from "./content/tile.html";
 import { getFirstElementSafe, waitForElement } from "./helpers/jQueryHelpers";
+import tile from "./resources/tile.html";
 
 const waitForPageLoad = async (): Promise<void> => {
 	await waitForElement(".muted");
