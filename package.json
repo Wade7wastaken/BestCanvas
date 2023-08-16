@@ -1,7 +1,6 @@
 {
 	"name": "typescript",
 	"version": "1.0.0",
-	"description": "A TypeScript template.",
 	"main": "./out/index.js",
 	"type": "module",
 	"scripts": {
@@ -22,6 +21,7 @@
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-unicorn": "^48.0.0",
+		"html-loader": "^4.2.0",
 		"prettier": "^3.0.0",
 		"style-loader": "^3.3.3",
 		"svg-url-loader": "^8.0.0",
@@ -30,8 +30,5 @@
 		"uglify-js": "^3.17.4",
 		"webpack": "^5.88.2",
 		"webpack-cli": "^5.1.4"
-	},
-	"dependencies": {
-		"html-loader": "^4.2.0"
 	}
 }
