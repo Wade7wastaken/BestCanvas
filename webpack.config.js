@@ -25,6 +25,10 @@ const config = {
 				test: /\.html$/,
 				use: ["html-loader"],
 			},
+			{
+				test: /\.svg$/,
+				loader: "svg-url-loader",
+			},
 		],
 	},
 	resolve: {

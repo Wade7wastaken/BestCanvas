@@ -1,4 +1,4 @@
-import { LocalStorageWrapper } from "./lsWrapper";
+import { LocalStorageWrapper } from "./helpers/lsWrapper";
 import { ClassInfo, GradeChange } from "./types";
 
 const extractData = (): ClassInfo[] => {
@@ -19,7 +19,7 @@ const extractData = (): ClassInfo[] => {
 		.toArray();
 };
 
-export const calcChanges = (): void => {
+export const calcChanges = (): GradeChange[] => {
 	const oldGrades = new LocalStorageWrapper<ClassInfo[]>("oldGrades", []);
 	const currentGrades = extractData();
 
@@ -42,7 +42,6 @@ export const calcChanges = (): void => {
 		}
 	}
 
-	console.log(changes);
-
 	oldGrades.set(currentGrades);
+	return changes;
 };

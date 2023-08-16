@@ -24,6 +24,7 @@
 		"eslint-plugin-unicorn": "^48.0.0",
 		"prettier": "^3.0.0",
 		"style-loader": "^3.3.3",
+		"svg-url-loader": "^8.0.0",
 		"ts-loader": "^9.4.4",
 		"typescript": "^5.1.6",
 		"uglify-js": "^3.17.4",
