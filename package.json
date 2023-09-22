@@ -13,9 +13,9 @@
 	"license": "ISC",
 	"devDependencies": {
 		"@types/jquery": "3.5.18",
-		"@types/node": "20.5.9",
-		"@typescript-eslint/eslint-plugin": "6.6.0",
-		"@typescript-eslint/parser": "6.6.0",
+		"@types/node": "20.6.0",
+		"@typescript-eslint/eslint-plugin": "6.7.0",
+		"@typescript-eslint/parser": "6.7.0",
 		"css-loader": "6.8.1",
 		"eslint": "8.49.0",
 		"eslint-config-prettier": "9.0.0",
@@ -32,4 +32,3 @@
 		"webpack-cli": "5.1.4"
 	}
 }
-

@@ -3,8 +3,6 @@ import { calcChanges } from "./extractData";
 import { init } from "./init";
 import { renderChanges } from "./renderChanges";
 
-import "./resources/styles.css";
-
 void (async () => {
 	init();
 	await contentLoader();

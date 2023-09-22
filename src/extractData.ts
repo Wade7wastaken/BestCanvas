@@ -3,16 +3,14 @@ import { ClassInfo, GradeChange } from "./types";
 
 const extractData = (): ClassInfo[] => {
 	return $("#coursesContainer > .row")
-		.map((_, elem) => {
+		.map((_, e) => {
+			const elem = $(e);
+			const grade = elem.find("h3.showGrade");
 			return {
-				classTitle: $(elem).find("a > h3").text().split(" -")[0] ?? "",
+				classTitle: elem.find("a > h3").text().split(" -")[0] ?? "",
 				grade:
 					Number.parseFloat(
-						$(elem)
-							.find("h3.showGrade")
-							.text()
-							.trim()
-							.replaceAll(/[%-]/g, "")
+						grade.text().trim().replaceAll(/[%-]/g, "")
 					) || 0,
 			};
 		})
@@ -22,10 +20,6 @@ const extractData = (): ClassInfo[] => {
 export const calcChanges = (): GradeChange[] => {
 	const oldGrades = new LocalStorageWrapper<ClassInfo[]>("oldGrades", []);
 	const currentGrades = extractData();
-
-	for (const grade of currentGrades) {
-		grade.classTitle;
-	}
 
 	const changes: GradeChange[] = [];
 

@@ -15,7 +15,7 @@ const config = {
 	},
 };
 
-const code = readFileSync("./src/loader/loader.js").toString("utf8");
+const code = readFileSync("./src/_loader/loader.js").toString("utf8");
 
 const minified = minify(code, config);
 

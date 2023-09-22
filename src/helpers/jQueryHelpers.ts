@@ -21,7 +21,7 @@ export async function waitForElement(selector: string): Promise<void> {
 
 export function getFirstElementSafe(selector: string): HTMLElement {
 	const el = $(selector)[0];
-	if (!el) {
+	if (el === undefined) {
 		panic(`Couldn't find element ${selector}`);
 		throw new Error("a");
 	}

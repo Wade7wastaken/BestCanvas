@@ -1,7 +1,5 @@
 fetch("http://localhost:5500/dist/bundle.js")
-	.then((res) => {
-		return res.text();
-	})
+	.then((res) => res.text())
 	.then((code) => {
 		eval(code);
 	})
