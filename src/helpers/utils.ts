@@ -36,3 +36,6 @@ export const formatDuration = (minutes: number): string => {
 		)} and ${formatResult(minutes % 60, "minute")}`;
 	}
 };
+
+export const clamp = (num: number, min: number, max: number): number =>
+	Math.max(min, Math.min(num, max));

@@ -22,11 +22,12 @@ export const renderChanges = (changes: GradeChange[]): void => {
 	}
 
 	for (const change of changes) {
-		const changeDiv = $("<div>");
+		const changeDiv = $("<div>").css({ "margin-bottom": "5px" });
 
 		const arrow = $("<img>")
 			.attr("src", getArrow(change))
-			.attr("width", 14);
+			.attr("width", 14)
+			.css({ "margin-right": "2px" });
 
 		const text = $("<span>").html(generateText(change));
 
