@@ -26,9 +26,21 @@
 					aria-expanded="true"
 					aria-hidden="false">
 					<div class="bb-tile-content-section">
-						<div class="muted" style="font-size: 11.5px">
-							Theme Changes
+						<div style="margin-bottom: 10px">
+							<span
+								class="muted"
+								style="font-size: 11.5px; margin-right: 5px">
+								Theme Changes
+							</span>
+							<button id="themeReset" style="font-size: 11.5px">Reset</button>
 						</div>
+						<input
+							type="range"
+							id="hueRange"
+							class="form-range"
+							min="0"
+							max="359"
+							value="211" />
 					</div>
 				</div>
 			</section>
@@ -98,7 +110,8 @@
 					aria-hidden="false">
 					<div class="bb-tile-content-section">
 						<div class="muted" style="font-size: 11.5px">
-							Assignments
+							Assignments cannot be viewed until the "Assignments"
+							tab is visited.
 						</div>
 					</div>
 				</div>

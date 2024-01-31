@@ -1,5 +1,5 @@
-import { LocalStorageWrapper } from "./helpers/lsWrapper";
-import { ClassInfo, GradeChange } from "./types";
+import { DEFAULT_GRADE } from "./config";
+import type { ClassInfo } from "./types";
 
 export const extractData = (): ClassInfo[] =>
 	$("#coursesContainer > .row")
@@ -12,28 +12,6 @@ export const extractData = (): ClassInfo[] =>
 						.text()
 						.trim()
 						.replaceAll(/[%-]/g, "")
-				) || 0,
+				) || DEFAULT_GRADE,
 		}))
 		.toArray();
-
-export const calcChanges = (currentGrades: ClassInfo[]): GradeChange[] => {
-	const oldGrades = new LocalStorageWrapper<ClassInfo[]>("oldGrades", []);
-
-	const changes: GradeChange[] = [];
-
-	for (const currentClass of currentGrades) {
-		const oldClass = oldGrades.value.find(
-			({ classTitle }) => classTitle === currentClass.classTitle
-		);
-		if (oldClass !== undefined && oldClass.grade !== currentClass.grade) {
-			changes.push({
-				classTitle: currentClass.classTitle,
-				newGrade: currentClass.grade,
-				oldGrade: oldClass.grade,
-			});
-		}
-	}
-
-	oldGrades.set(currentGrades);
-	return changes;
-};

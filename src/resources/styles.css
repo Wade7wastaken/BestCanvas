@@ -1,5 +1,11 @@
-/*This is to fix the performance card, because when it gets too small, the text
-won't fit.*/
-.fix-performance {
-	max-width: calc(100% - 40px) !important;
+#hueRange {
+	border: none;
+	width: 100%;
+	height: 10px;
+	border-radius: 5px;
+	background: linear-gradient(
+		to right in hsl increasing hue,
+		hsl(0 100% 50%),
+		hsl(359, 100%, 50%)
+	);
 }

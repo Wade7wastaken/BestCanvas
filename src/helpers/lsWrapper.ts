@@ -1,8 +1,8 @@
 export class LocalStorageWrapper<T> {
-	value: T;
-	location: string;
+	public readonly value: T;
+	public readonly location: string;
 
-	constructor(location: string, defaultValue: T) {
+	public constructor(location: string, defaultValue: T) {
 		this.location = location;
 		const currentValue = localStorage.getItem(location);
 
@@ -15,7 +15,7 @@ export class LocalStorageWrapper<T> {
 		this.value = JSON.parse(currentValue) as T;
 	}
 
-	set(newValue: T): void {
+	public set(newValue: T): void {
 		localStorage.setItem(this.location, JSON.stringify(newValue));
 	}
 }

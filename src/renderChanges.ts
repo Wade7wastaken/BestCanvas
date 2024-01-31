@@ -1,6 +1,6 @@
 import greenArrow from "./resources/greenArrow.min.svg";
 import redArrow from "./resources/redArrow.min.svg";
-import { GradeChange } from "./types";
+import type { GradeChange } from "./types";
 
 const getArrow = (change: GradeChange): string =>
 	change.newGrade < change.oldGrade ? redArrow : greenArrow;

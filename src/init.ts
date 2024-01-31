@@ -1,4 +1,5 @@
 import { reload } from "./contentLoader";
+import { checkJQuery } from "./helpers/jQueryHelpers";
 import { panic } from "./helpers/utils";
 
 const domainChecker = (): void => {
@@ -24,6 +25,7 @@ const goToProgress = (): void => {
 };
 
 export const init = (): void => {
+	checkJQuery();
 	domainChecker();
 	goToProgress();
 };
