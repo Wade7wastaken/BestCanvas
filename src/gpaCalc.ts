@@ -1,5 +1,6 @@
 import { clamp } from "./helpers/utils";
 import { gpaMap } from "./resources/gpaMap";
+
 import type { ClassInfo } from "./types";
 
 export const isWeightedClass = (classTitle: string): boolean =>

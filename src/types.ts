@@ -1,9 +1,9 @@
-export interface ClassInfo {
+export type ClassInfo = {
 	classTitle: string;
 	grade: number;
 }
 
-export interface GradeChange {
+export type GradeChange = {
 	classTitle: string;
 	oldGrade: number;
 	newGrade: number;

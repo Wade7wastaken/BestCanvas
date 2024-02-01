@@ -1,4 +1,5 @@
 import { DEFAULT_GRADE } from "./config";
+
 import type { ClassInfo } from "./types";
 
 export const extractData = (): ClassInfo[] =>

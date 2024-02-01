@@ -17,10 +17,21 @@
 		"plugin:@typescript-eslint/eslint-recommended",
 		"plugin:@typescript-eslint/strict-type-checked",
 		"plugin:@typescript-eslint/stylistic-type-checked",
-		"plugin:@typescript-eslint/eslint-recommended",
+		"plugin:import/recommended",
+		"plugin:import/typescript",
 		"plugin:unicorn/recommended",
 		"prettier"
 	],
+	"settings": {
+		"import/parsers": {
+			"@typescript-eslint/parser": [".ts"]
+		},
+		"import/resolver": {
+			"typescript": {
+				"project": "./tsconfig.json"
+			}
+		}
+	},
 	"rules": {
 		/* TEMPLATE RULES */
 
@@ -38,13 +49,22 @@
 		"@typescript-eslint/no-non-null-assertion": "warn",
 		"@typescript-eslint/prefer-nullish-coalescing": "warn",
 		"@typescript-eslint/prefer-optional-chain": "warn",
+		"@typescript-eslint/consistent-type-definitions": ["error", "type"],
 
 		// Import Rules
 		"import/order": [
 			"warn",
 			{
 				"newlines-between": "always",
-				"alphabetize": { "order": "asc", "caseInsensitive": true }
+				"alphabetize": { "order": "asc", "caseInsensitive": true },
+				"groups": [
+					"builtin",
+					"external",
+					"parent",
+					"sibling",
+					"index",
+					"type"
+				]
 			}
 		],
 

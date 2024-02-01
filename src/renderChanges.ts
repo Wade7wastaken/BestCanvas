@@ -1,5 +1,6 @@
 import greenArrow from "./resources/greenArrow.min.svg";
 import redArrow from "./resources/redArrow.min.svg";
+
 import type { GradeChange } from "./types";
 
 const getArrow = (change: GradeChange): string =>

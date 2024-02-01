@@ -1,4 +1,5 @@
 import { LocalStorageWrapper } from "./helpers/lsWrapper";
+
 import type { ClassInfo, GradeChange } from "./types";
 
 export const calcChanges = (currentGrades: ClassInfo[]): GradeChange[] => {

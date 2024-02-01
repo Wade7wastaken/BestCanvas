@@ -4,6 +4,7 @@ import { panic } from "./utils";
 
 // add exists to the jquery interface
 declare global {
+	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface JQuery {
 		exists(): boolean;
 	}
