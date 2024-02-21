@@ -1,6 +1,6 @@
 import { LocalStorageWrapper } from "./helpers/lsWrapper";
-import { panic } from "./helpers/utils";
-import header from "./resources/cssHeader.css";
+import { AlertPanic } from "./helpers/utils";
+import header from "./resources/cssHeader.scss";
 
 const initStyle = (): void => {
 	const $style = $("#app-style style");
@@ -34,23 +34,23 @@ const DEFAULT_HUE = "211";
 
 export const initColorSlider = (): void => {
 	initStyle();
-	const storage = new LocalStorageWrapper("themeColor", "211");
+	const storage = new LocalStorageWrapper("themeColor", DEFAULT_HUE);
 
 	const setColor = (val: string): void => {
 		document.documentElement.style.setProperty("--main-hue", val);
 		storage.set(val);
 	};
 
-	setColor(storage.value);
-
 	const hueSlider = $("#hueRange");
+
+	setColor(storage.value);
+	hueSlider.val(storage.value);
 
 	hueSlider.on("input", () => {
 		const val = hueSlider.val();
 
-		if (typeof val !== "string") {
-			return panic("slider value wasn't a string!");
-		}
+		if (typeof val !== "string")
+			throw new AlertPanic("slider value wasn't a string!");
 
 		console.log(`changing hue to ${val}`);
 		setColor(val);

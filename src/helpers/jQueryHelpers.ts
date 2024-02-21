@@ -1,6 +1,6 @@
 import { WAIT_FOR_ELEMENT_DELAY } from "../config";
 
-import { panic } from "./utils";
+import { AlertPanic } from "./utils";
 
 // add exists to the jquery interface
 declare global {
@@ -12,7 +12,7 @@ declare global {
 
 export const checkJQuery = (): void => {
 	if (typeof jQuery === "undefined")
-		panic("This script is only meant to run on mySFHS.");
+		throw new AlertPanic("This script is only meant to run on mySFHS.");
 };
 
 jQuery.fn.exists = function (): boolean {
@@ -26,6 +26,7 @@ export async function waitForElement(selector: string): Promise<void> {
 
 export function getFirstElementSafe(selector: string): HTMLElement {
 	const el = $(selector)[0];
-	if (el === undefined) return panic(`Couldn't find element ${selector}`);
+	if (el === undefined)
+		throw new AlertPanic(`Couldn't find element ${selector}`);
 	return el;
 }

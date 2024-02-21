@@ -1,6 +1,6 @@
 import { reload } from "./contentLoader";
 import { checkJQuery } from "./helpers/jQueryHelpers";
-import { panic } from "./helpers/utils";
+import { AlertPanic } from "./helpers/utils";
 
 const domainChecker = (): void => {
 	if (
@@ -9,7 +9,7 @@ const domainChecker = (): void => {
 			"This script is only meant to run on mySFHS. Do you want to continue?"
 		)
 	)
-		panic("Script canceled by user.");
+		throw new AlertPanic("Script canceled by user.");
 };
 
 const goToProgress = (): void => {

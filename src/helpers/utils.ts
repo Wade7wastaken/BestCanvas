@@ -1,9 +1,9 @@
-export const panic = (message: string): never => {
-	alert(
-		"OCP: Something has gone wrong. See the developer console for more information."
-	);
-	throw new Error(message);
-};
+export class AlertPanic extends Error {
+	public constructor(message: string) {
+		super(message);
+		alert("OCP: Something has gone wrong. See the developer console for more information.")
+	}
+}
 
 const OCPDebug = process.env.NODE_ENV === "development";
 

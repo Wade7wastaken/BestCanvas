@@ -1,0 +1,34 @@
+:root {
+	--main-hue: 211;
+	--sec-hue: calc(var(--main-hue) - 6);
+
+	@function setMainHue($s, $l) {
+		@return hsl(var(--main-hue), $s, $l);
+	}
+
+	@function setSecHue($s, $l) {
+		@return hsl(var(--sec-hue), $s, $l);
+	}
+
+	/* #004a97 */
+	--pri-100: #{setMainHue(100%, 30%)};
+	/* #4077b1 */
+	--pri-75: #{setMainHue(45%, 47%)};
+	/* #80a4cb */
+	--pri-50: #{setMainHue(45%, 65%)};
+	/* #bfd2e5 */
+	--pri-25: #{setMainHue(45%, 82%)};
+	/* #d9e4ef */
+	--pri-15: #{setMainHue(45%, 89%)};
+
+	/* #65b2e9 */
+	--sec-100: #{setSecHue(75%, 65%)};
+	/* #8cc5ee */
+	--sec-75: #{setSecHue(75%, 74%)};
+	/* #b2d8f4 */
+	--sec-50: #{setSecHue(75%, 83%)};
+	/* #d8ecfa */
+	--sec-25: #{setSecHue(75%, 91%)};
+	/* #e8f3fc */
+	--sec-15: #{setSecHue(75%, 95%)};
+}

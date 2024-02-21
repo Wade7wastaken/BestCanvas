@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 
 /** @type {import('webpack').Configuration} */
 const config = {
-	mode: "development",
+	mode: "production",
 	devtool: false,
 	entry: "./src/index.ts",
 	output: {
@@ -13,20 +13,28 @@ const config = {
 	module: {
 		rules: [
 			{
-				test: /\.ts(x)?$/,
+				test: /\.ts(x)?$/i,
 				loader: "ts-loader",
 				exclude: /node_modules/,
 			},
 			{
-				test: /\.css$/,
+				test: /\.css$/i,
 				use: ["to-string-loader", "css-loader"],
 			},
 			{
-				test: /\.html$/,
+				test: /\.s[ac]ss$/i,
+				use: [
+					"to-string-loader",
+					"css-loader",
+					"sass-loader",
+				],
+			},
+			{
+				test: /\.html$/i,
 				loader: "html-loader",
 			},
 			{
-				test: /\.svg$/,
+				test: /\.svg$/i,
 				loader: "svg-url-loader",
 			},
 		],
