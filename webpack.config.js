@@ -23,11 +23,7 @@ const config = {
 			},
 			{
 				test: /\.s[ac]ss$/i,
-				use: [
-					"to-string-loader",
-					"css-loader",
-					"sass-loader",
-				],
+				use: ["to-string-loader", "css-loader", "sass-loader"],
 			},
 			{
 				test: /\.html$/i,
