@@ -75,4 +75,3 @@ export const initColorSlider = (): void => {
 		setTheme(lsHue.value, lsColored.value);
 	});
 };
-
