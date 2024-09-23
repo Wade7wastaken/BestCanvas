@@ -34,17 +34,26 @@ const DEFAULT_HUE = "211";
 
 export const initColorSlider = (): void => {
 	initStyle();
-	const storage = new LocalStorageWrapper("themeColor", DEFAULT_HUE);
+	const lsHue = new LocalStorageWrapper("themeColor", DEFAULT_HUE);
+	const lsLightness = new LocalStorageWrapper("lightness", "180");
+	const lsColored = new LocalStorageWrapper("colored", "1");
 
-	const setColor = (val: string): void => {
-		document.documentElement.style.setProperty("--main-hue", val);
-		storage.set(val);
+	const setTheme = (sliderVal: string, colored: string): void => {
+		document.documentElement.style.setProperty("--main-hue", sliderVal);
+		document.documentElement.style.setProperty("--colored", colored);
+		document.documentElement.style.setProperty(
+			"--lightness",
+			(colored === "1" ? "180" : sliderVal) + "%"
+		);
+		lsHue.set(sliderVal);
+		lsLightness.set(sliderVal);
+		lsColored.set(colored);
 	};
 
 	const hueSlider = $("#hueRange");
 
-	setColor(storage.value);
-	hueSlider.val(storage.value);
+	setTheme(lsHue.value, lsColored.value);
+	hueSlider.val(lsHue.value);
 
 	hueSlider.on("input", () => {
 		const val = hueSlider.val();
@@ -53,11 +62,16 @@ export const initColorSlider = (): void => {
 			throw new AlertPanic("slider value wasn't a string!");
 
 		console.log(`changing hue to ${val}`);
-		setColor(val);
+		setTheme(val, lsColored.value);
 	});
 
 	$("#themeReset").on("click", () => {
-		setColor(DEFAULT_HUE);
+		setTheme(DEFAULT_HUE, "1");
 		hueSlider.val(DEFAULT_HUE);
+	});
+
+	$("#grayscale").on("change", function () {
+		lsColored.set(lsColored.value === "0" ? "1" : "0");
+		setTheme(lsHue.value, lsColored.value);
 	});
 };

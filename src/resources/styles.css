@@ -1,11 +1,7 @@
 #hueRange {
 	width: 100%;
 	border-radius: 6px;
-	background: linear-gradient(
-		to right in hsl increasing hue,
-		hsl(0, 50%, 75%),
-		hsl(359, 50%, 75%)
-	);
+	background: linear-gradient(in hsl longer hue 90deg, hsl(0, 50%, 75%) 0 0);
 	outline: none;
 	margin-bottom: 10px;
 }

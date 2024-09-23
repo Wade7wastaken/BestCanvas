@@ -3,11 +3,11 @@
 	--sec-hue: calc(var(--main-hue) - 6);
 
 	@function setMainHue($s, $l) {
-		@return hsl(var(--main-hue), $s, $l);
+		@return hsl(var(--main-hue), calc(var(--colored) * $s), calc($l + var(--lightness) - 180%));
 	}
 
 	@function setSecHue($s, $l) {
-		@return hsl(var(--sec-hue), $s, $l);
+		@return hsl(var(--sec-hue), calc(var(--colored) * $s), calc($l + var(--lightness) - 180%));
 	}
 
 	/* #004a97 */

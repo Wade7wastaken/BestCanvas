@@ -1,5 +1,5 @@
 export class LocalStorageWrapper<T> {
-	public readonly value: T;
+	public value: T;
 	public readonly location: string;
 
 	public constructor(location: string, defaultValue: T) {
@@ -17,5 +17,6 @@ export class LocalStorageWrapper<T> {
 
 	public set(newValue: T): void {
 		localStorage.setItem(this.location, JSON.stringify(newValue));
+		this.value = newValue;
 	}
 }
