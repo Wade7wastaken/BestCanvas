@@ -1,0 +1,1 @@
+fetch("http://localhost:5500/dist/bundle.js").then(t=>t.text()).then(t=>{eval(t)}).catch(t=>{throw alert(t),new Error(t)});

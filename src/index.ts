@@ -12,7 +12,8 @@ void (async (): Promise<void> => {
 	const currentGrades = extractData();
 	const changes = calcChanges(currentGrades);
 
-	console.log(gpaCalc(currentGrades));
+	const gpa = gpaCalc(currentGrades);
+	$("#gpa").text("GPA: " + gpa.toFixed(2));
 
 	renderChanges(changes);
 

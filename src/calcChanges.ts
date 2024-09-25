@@ -20,6 +20,6 @@ export const calcChanges = (currentGrades: ClassInfo[]): GradeChange[] => {
 		}
 	}
 
-	//oldGrades.set(currentGrades);
+	oldGrades.set(currentGrades);
 	return changes;
 };
