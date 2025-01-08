@@ -1,5 +1,4 @@
 import { calcChanges } from "./calcChanges";
-import { initColorSlider } from "./colors";
 import { contentLoader } from "./contentLoader";
 import { extractData } from "./extractData";
 import { gpaCalc } from "./gpaCalc";
@@ -16,8 +15,6 @@ void (async (): Promise<void> => {
 	$("#gpa").text("GPA: " + gpa.toFixed(2));
 
 	renderChanges(changes);
-
-	initColorSlider();
 
 	console.log("done");
 })();

@@ -17,14 +17,14 @@ const config = {
 				loader: "ts-loader",
 				exclude: /node_modules/,
 			},
-			{
-				test: /\.css$/i,
-				use: ["to-string-loader", "css-loader"],
-			},
-			{
-				test: /\.s[ac]ss$/i,
-				use: ["to-string-loader", "css-loader", "sass-loader"],
-			},
+			// {
+			// 	test: /\.css$/i,
+			// 	use: ["to-string-loader", "css-loader"],
+			// },
+			// {
+			// 	test: /\.s[ac]ss$/i,
+			// 	use: ["to-string-loader", "css-loader", "sass-loader"],
+			// },
 			{
 				test: /\.html$/i,
 				loader: "html-loader",
