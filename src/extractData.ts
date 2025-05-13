@@ -1,11 +1,9 @@
-import { DEFAULT_GRADE } from "./config";
+import type { Course } from "./types";
 
-import type { ClassInfo } from "./types";
-
-export const extractData = (): ClassInfo[] =>
+export const extractData = (): Course[] =>
 	$("#coursesContainer > .row")
 		.map((_, row) => ({
-			classTitle: $(row).find("a > h3").text().split(" -")[0] ?? "",
+			title: $(row).find("a > h3").text().split(" -")[0] ?? "",
 			grade: Number.parseFloat(
 				$(row)
 					.find("h3.showGrade")
@@ -15,4 +13,4 @@ export const extractData = (): ClassInfo[] =>
 			),
 		}))
 		.toArray()
-		.filter((c) => !isNaN(c.grade));
+		.filter((c) => !Number.isNaN(c.grade));

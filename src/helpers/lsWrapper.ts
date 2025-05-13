@@ -1,4 +1,4 @@
-export class LocalStorageWrapper<T> {
+export class LSWrapper<T> {
 	public value: T;
 	public readonly location: string;
 

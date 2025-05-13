@@ -54,28 +54,54 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _helpers_lsWrapper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./helpers/lsWrapper */ "./src/helpers/lsWrapper.ts");
 
-var calcChanges = function (currentGrades) {
-    var oldGrades = new _helpers_lsWrapper__WEBPACK_IMPORTED_MODULE_0__.LocalStorageWrapper("oldGrades", []);
-    var changes = [];
-    var _loop_1 = function (currentClass) {
-        var oldClass = oldGrades.value.find(function (_a) {
-            var classTitle = _a.classTitle;
-            return classTitle === currentClass.classTitle;
-        });
-        if (oldClass !== undefined && oldClass.grade !== currentClass.grade) {
+const DEFAULT_LS_DATA = {
+    old: { courses: [], timestamp: undefined },
+    prev: { courses: [], timestamp: undefined },
+};
+const compare = (a, b) => {
+    const changes = [];
+    for (const currentCourse of a) {
+        const oldCourse = b.find(({ title }) => title === currentCourse.title);
+        if (oldCourse !== undefined &&
+            oldCourse.grade !== currentCourse.grade) {
             changes.push({
-                classTitle: currentClass.classTitle,
-                newGrade: currentClass.grade,
-                oldGrade: oldClass.grade,
+                title: currentCourse.title,
+                newGrade: currentCourse.grade,
+                oldGrade: oldCourse.grade,
             });
         }
-    };
-    for (var _i = 0, currentGrades_1 = currentGrades; _i < currentGrades_1.length; _i++) {
-        var currentClass = currentGrades_1[_i];
-        _loop_1(currentClass);
     }
-    oldGrades.set(currentGrades);
     return changes;
+};
+const calcChanges = (currentCourses) => {
+    var _a;
+    const oldCourses = new _helpers_lsWrapper__WEBPACK_IMPORTED_MODULE_0__.LSWrapper("oldGrades", DEFAULT_LS_DATA);
+    const now = Date.now();
+    const { value: { prev, old }, } = oldCourses;
+    if (now - ((_a = prev.timestamp) !== null && _a !== void 0 ? _a : 0) > 1000 * 60 * 10) {
+        const changes = compare(currentCourses, prev.courses);
+        oldCourses.set({
+            prev: { courses: currentCourses, timestamp: now },
+            old: prev,
+        });
+        return {
+            changes,
+            now,
+            timeSaved: prev.timestamp,
+        };
+    }
+    else {
+        const changes = compare(currentCourses, old.courses);
+        oldCourses.set({
+            prev: { courses: currentCourses, timestamp: now },
+            old,
+        });
+        return {
+            changes,
+            now,
+            timeSaved: old.timestamp,
+        };
+    }
 };
 
 
@@ -90,110 +116,10 @@ var calcChanges = function (currentGrades) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DEFAULT_GRADE: () => (/* binding */ DEFAULT_GRADE),
 /* harmony export */   WAIT_FOR_ELEMENT_DELAY: () => (/* binding */ WAIT_FOR_ELEMENT_DELAY)
 /* harmony export */ });
-// the grade to assume when there are no points for a class
-var DEFAULT_GRADE = 100;
 // ms
-var WAIT_FOR_ELEMENT_DELAY = 100;
-
-
-/***/ }),
-
-/***/ "./src/contentLoader.ts":
-/*!******************************!*\
-  !*** ./src/contentLoader.ts ***!
-  \******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   contentLoader: () => (/* binding */ contentLoader),
-/* harmony export */   reload: () => (/* binding */ reload)
-/* harmony export */ });
-/* harmony import */ var _helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./helpers/jQueryHelpers */ "./src/helpers/jQueryHelpers.ts");
-/* harmony import */ var _resources_tile_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./resources/tile.html */ "./src/resources/tile.html");
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-
-
-var waitForPageLoad = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, (0,_helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_0__.waitForElement)(".muted")];
-            case 1:
-                _a.sent();
-                return [4 /*yield*/, (0,_helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_0__.waitForElement)(".ch.col-md-4")];
-            case 2:
-                _a.sent();
-                return [4 /*yield*/, (0,_helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_0__.waitForElement)(".showGrade")];
-            case 3:
-                _a.sent();
-                return [2 /*return*/];
-        }
-    });
-}); };
-var loadHTML = function () {
-    (0,_helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_0__.getFirstElementSafe)("#performanceCollapse > div.bb-tile-content-section").insertAdjacentHTML("beforeend", _resources_tile_html__WEBPACK_IMPORTED_MODULE_1__["default"]);
-};
-var contentLoader = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, waitForPageLoad()];
-            case 1:
-                _a.sent();
-                loadHTML();
-                return [2 /*return*/];
-        }
-    });
-}); };
-var reload = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, waitForPageLoad()];
-            case 1:
-                _a.sent();
-                loadHTML();
-                return [2 /*return*/];
-        }
-    });
-}); };
+const WAIT_FOR_ELEMENT_DELAY = 100;
 
 
 /***/ }),
@@ -209,24 +135,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   extractData: () => (/* binding */ extractData)
 /* harmony export */ });
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./config */ "./src/config.ts");
-
-var extractData = function () {
-    return $("#coursesContainer > .row")
-        .map(function (_, row) {
-        var _a;
-        return ({
-            classTitle: (_a = $(row).find("a > h3").text().split(" -")[0]) !== null && _a !== void 0 ? _a : "",
-            grade: Number.parseFloat($(row)
-                .find("h3.showGrade")
-                .text()
-                .trim()
-                .replaceAll(/[%-]/g, "")),
-        });
-    })
-        .toArray()
-        .filter(function (c) { return !isNaN(c.grade); });
-};
+const extractData = () => $("#coursesContainer > .row")
+    .map((_, row) => {
+    var _a;
+    return ({
+        title: (_a = $(row).find("a > h3").text().split(" -")[0]) !== null && _a !== void 0 ? _a : "",
+        grade: Number.parseFloat($(row)
+            .find("h3.showGrade")
+            .text()
+            .trim()
+            .replaceAll(/[%-]/g, "")),
+    });
+})
+    .toArray()
+    .filter((c) => !Number.isNaN(c.grade));
 
 
 /***/ }),
@@ -241,24 +163,21 @@ var extractData = function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   gpaCalc: () => (/* binding */ gpaCalc),
-/* harmony export */   isWeightedClass: () => (/* binding */ isWeightedClass)
+/* harmony export */   maxGpaCalc: () => (/* binding */ maxGpaCalc)
 /* harmony export */ });
 /* harmony import */ var _helpers_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./helpers/utils */ "./src/helpers/utils.ts");
 /* harmony import */ var _resources_gpaMap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./resources/gpaMap */ "./src/resources/gpaMap.ts");
 
 
-var isWeightedClass = function (classTitle) {
-    return classTitle.endsWith("-H");
-};
-var gpaCalc = function (currentGrades, weighted) {
-    if (weighted === void 0) { weighted = true; }
-    return currentGrades.reduce(function (accumulator, currentValue) {
-        var _a;
-        return accumulator +
-            (((_a = _resources_gpaMap__WEBPACK_IMPORTED_MODULE_1__.gpaMap[(0,_helpers_utils__WEBPACK_IMPORTED_MODULE_0__.clamp)(Math.floor(currentValue.grade), 70, 99)]) !== null && _a !== void 0 ? _a : 0) +
-                (weighted && isWeightedClass(currentValue.classTitle) ? 1 : 0));
-    }, 0) / currentGrades.length;
-};
+const base_gpa = (grade) => { var _a; return (_a = _resources_gpaMap__WEBPACK_IMPORTED_MODULE_1__.gpaMap[(0,_helpers_utils__WEBPACK_IMPORTED_MODULE_0__.clamp)(Math.floor(grade), 70, 99)]) !== null && _a !== void 0 ? _a : 0; };
+const isWeightedClass = (title) => title.endsWith("-H");
+const weight = (weighted, title) => weighted && isWeightedClass(title) ? 1 : 0;
+const gpaCalc = (courses, weighted = true) => courses
+    .map(({ grade, title }) => base_gpa(grade) + weight(weighted, title))
+    .reduce((acc, n) => acc + n, 0) / courses.length;
+const maxGpaCalc = (courses, weighted = true) => courses
+    .map(({ title }) => base_gpa(99) + weight(weighted, title))
+    .reduce((acc, n) => acc + n, 0) / courses.length;
 
 
 /***/ }),
@@ -274,74 +193,44 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   checkJQuery: () => (/* binding */ checkJQuery),
 /* harmony export */   getFirstElementSafe: () => (/* binding */ getFirstElementSafe),
+/* harmony export */   setUpJQuery: () => (/* binding */ setUpJQuery),
 /* harmony export */   waitForElement: () => (/* binding */ waitForElement)
 /* harmony export */ });
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../config */ "./src/config.ts");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./src/helpers/utils.ts");
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+
+
+const checkJQuery = async () => {
+    while (typeof jQuery === "undefined") {
+        await new Promise((r) => setTimeout(r, _config__WEBPACK_IMPORTED_MODULE_0__.WAIT_FOR_ELEMENT_DELAY));
     }
+    // if (typeof jQuery === "undefined") {
+    // 	// for some reason we don't have jquery, so we load our own
+    // 	console.error("jQuery was undefined, trying to load from cdn");
+    // 	const el = document.createElement("script");
+    // 	el.src = "https://code.jquery.com/jquery-3.7.1.min.js";
+    // 	el.integrity = "sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=";
+    // 	el.crossOrigin = "anonymous";
+    // 	el.async = false;
+    // 	document.head.append(el);
+    // 	if (typeof jQuery === "undefined") {
+    // 		throw new AlertPanic("Couldn't initialize jQuery");
+    // 	}
+    // }
 };
-
-
-var checkJQuery = function () {
-    if (typeof jQuery === "undefined")
-        throw new _utils__WEBPACK_IMPORTED_MODULE_1__.AlertPanic("This script is only meant to run on mySFHS.");
+const setUpJQuery = () => {
+    jQuery.fn.exists = function () {
+        return this.length > 0;
+    };
 };
-jQuery.fn.exists = function () {
-    return this.length > 0;
-};
-function waitForElement(selector) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (!!$(selector).exists()) return [3 /*break*/, 2];
-                    return [4 /*yield*/, new Promise(function (r) { return setTimeout(r, _config__WEBPACK_IMPORTED_MODULE_0__.WAIT_FOR_ELEMENT_DELAY); })];
-                case 1:
-                    _a.sent();
-                    return [3 /*break*/, 0];
-                case 2: return [2 /*return*/];
-            }
-        });
-    });
+async function waitForElement(selector) {
+    while (!$(selector).exists())
+        await new Promise((r) => setTimeout(r, _config__WEBPACK_IMPORTED_MODULE_0__.WAIT_FOR_ELEMENT_DELAY));
 }
 function getFirstElementSafe(selector) {
-    var el = $(selector)[0];
+    const el = $(selector)[0];
     if (el === undefined)
-        throw new _utils__WEBPACK_IMPORTED_MODULE_1__.AlertPanic("Couldn't find element ".concat(selector));
+        throw new _utils__WEBPACK_IMPORTED_MODULE_1__.AlertPanic(`Couldn't find element ${selector}`);
     return el;
 }
 
@@ -357,12 +246,12 @@ function getFirstElementSafe(selector) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   LocalStorageWrapper: () => (/* binding */ LocalStorageWrapper)
+/* harmony export */   LSWrapper: () => (/* binding */ LSWrapper)
 /* harmony export */ });
-var LocalStorageWrapper = /** @class */ (function () {
-    function LocalStorageWrapper(location, defaultValue) {
+class LSWrapper {
+    constructor(location, defaultValue) {
         this.location = location;
-        var currentValue = localStorage.getItem(location);
+        const currentValue = localStorage.getItem(location);
         if (currentValue === null) {
             localStorage.setItem(location, JSON.stringify(defaultValue));
             this.value = defaultValue;
@@ -370,13 +259,11 @@ var LocalStorageWrapper = /** @class */ (function () {
         }
         this.value = JSON.parse(currentValue);
     }
-    LocalStorageWrapper.prototype.set = function (newValue) {
+    set(newValue) {
         localStorage.setItem(this.location, JSON.stringify(newValue));
         this.value = newValue;
-    };
-    return LocalStorageWrapper;
-}());
-
+    }
+}
 
 
 /***/ }),
@@ -395,41 +282,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   debug: () => (/* binding */ debug),
 /* harmony export */   formatDuration: () => (/* binding */ formatDuration)
 /* harmony export */ });
-var __extends = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var AlertPanic = /** @class */ (function (_super) {
-    __extends(AlertPanic, _super);
-    function AlertPanic(message) {
-        var _this = _super.call(this, message) || this;
+class AlertPanic extends Error {
+    constructor(message) {
+        super(message);
         alert("OCP: Something has gone wrong. See the developer console for more information.");
-        return _this;
     }
-    return AlertPanic;
-}(Error));
-
-var OCPDebug = "development" === "development";
-var debug = function (message) {
+}
+const OCPDebug = "development" === "development";
+const debug = (message) => {
     if (OCPDebug)
         console.log(message);
 };
-var formatResult = function (value, unit, includeAgo) {
-    if (includeAgo === void 0) { includeAgo = true; }
-    return "".concat(Math.round(value), " ").concat(unit).concat(value === 1 ? "" : "s").concat(includeAgo ? " ago" : "");
+const formatResult = (value, unit, includeAgo = true) => {
+    return `${Math.round(value)} ${unit}${value === 1 ? "" : "s"}${includeAgo ? " ago" : ""}`;
 };
-var formatDuration = function (minutes) {
+const formatDuration = (minutes) => {
     if (minutes < 1) {
         return "less than a minute ago";
     }
@@ -440,54 +307,93 @@ var formatDuration = function (minutes) {
         return formatResult(minutes / 60, "hour");
     }
     else {
-        return "".concat(formatResult((minutes - (minutes % 60)) / 60, "hour", false), " and ").concat(formatResult(minutes % 60, "minute"));
+        return `${formatResult((minutes - (minutes % 60)) / 60, "hour", false)} and ${formatResult(minutes % 60, "minute")}`;
     }
 };
-var clamp = function (num, min, max) {
-    return Math.max(min, Math.min(num, max));
-};
+const clamp = (num, min, max) => Math.max(min, Math.min(num, max));
 
 
 /***/ }),
 
-/***/ "./src/init.ts":
-/*!*********************!*\
-  !*** ./src/init.ts ***!
-  \*********************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ "./src/index.ts":
+/*!**********************!*\
+  !*** ./src/index.ts ***!
+  \**********************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   init: () => (/* binding */ init)
-/* harmony export */ });
-/* harmony import */ var _contentLoader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./contentLoader */ "./src/contentLoader.ts");
-/* harmony import */ var _helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./helpers/jQueryHelpers */ "./src/helpers/jQueryHelpers.ts");
-/* harmony import */ var _helpers_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./helpers/utils */ "./src/helpers/utils.ts");
+/* harmony import */ var _calcChanges__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./calcChanges */ "./src/calcChanges.ts");
+/* harmony import */ var _extractData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./extractData */ "./src/extractData.ts");
+/* harmony import */ var _gpaCalc__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./gpaCalc */ "./src/gpaCalc.ts");
+/* harmony import */ var _helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./helpers/jQueryHelpers */ "./src/helpers/jQueryHelpers.ts");
+/* harmony import */ var _renderChanges__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./renderChanges */ "./src/renderChanges.ts");
+/* harmony import */ var _resources_tile_html__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./resources/tile.html */ "./src/resources/tile.html");
 
 
 
-var domainChecker = function () {
-    if (!window.location.href.includes("myschoolapp.com") &&
-        !confirm("This script is only meant to run on mySFHS. Do you want to continue?"))
-        throw new _helpers_utils__WEBPACK_IMPORTED_MODULE_2__.AlertPanic("Script canceled by user.");
+
+
+
+// need to use var to avoid redeclaration
+// eslint-disable-next-line no-var
+var OCP_ran;
+const reRunProtection = () => {
+    if (OCP_ran == true) {
+        console.log("already ran");
+        return true;
+    }
+    OCP_ran = true;
+    return false;
 };
-var goToProgress = function () {
-    window.location.hash = "#studentmyday/progress";
-    // whenever the user goes to a new page, load the content again. Important
-    // to put this after setting the hash for the first time
-    $(window).on("hashchange", function () {
-        if (window.location.hash === "#studentmyday/progress") {
-            void (0,_contentLoader__WEBPACK_IMPORTED_MODULE_0__.reload)();
-        }
-    });
+const domainChecker = () => {
+    if (!globalThis.location.href.includes("myschoolapp.com") &&
+        !confirm("This script is only meant to run on mySFHS. Do you want to continue?")) {
+        throw new Error("Canceled by user");
+    }
 };
-var init = function () {
-    (0,_helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_1__.checkJQuery)();
+const reload = async () => {
+    if (globalThis.location.hash === "#studentmyday/progress") {
+        await waitForPageLoad();
+        loadHTML();
+        insertData();
+    }
+};
+const waitForPageLoad = async () => {
+    await (0,_helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_3__.waitForElement)(".muted");
+    await (0,_helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_3__.waitForElement)(".ch.col-md-4");
+    await (0,_helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_3__.waitForElement)(".showGrade");
+};
+const loadHTML = () => {
+    (0,_helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_3__.getFirstElementSafe)("#performanceCollapse > div.bb-tile-content-section").insertAdjacentHTML("beforeend", _resources_tile_html__WEBPACK_IMPORTED_MODULE_5__["default"]);
+};
+const insertData = () => {
+    const currentGrades = (0,_extractData__WEBPACK_IMPORTED_MODULE_1__.extractData)();
+    const gpa = (0,_gpaCalc__WEBPACK_IMPORTED_MODULE_2__.gpaCalc)(currentGrades);
+    const maxGpa = (0,_gpaCalc__WEBPACK_IMPORTED_MODULE_2__.maxGpaCalc)(currentGrades);
+    $("#gpa").text(`GPA: ${gpa.toFixed(2)}/${maxGpa.toFixed(2)} (${((gpa / maxGpa) * 100).toFixed(0)}%)`);
+    const changes = (0,_calcChanges__WEBPACK_IMPORTED_MODULE_0__.calcChanges)(currentGrades);
+    (0,_renderChanges__WEBPACK_IMPORTED_MODULE_4__.renderChanges)(changes);
+    console.log("done");
+};
+await (async () => {
+    console.log("Running OCP");
+    if (reRunProtection()) {
+        return;
+    }
     domainChecker();
-    goToProgress();
-};
+    await (0,_helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_3__.checkJQuery)();
+    (0,_helpers_jQueryHelpers__WEBPACK_IMPORTED_MODULE_3__.setUpJQuery)();
+    // whenever the user goes to the progress page, load the content again
+    $(globalThis).on("hashchange", () => {
+        void reload();
+    });
+    void reload();
+})();
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } }, 1);
 
 /***/ }),
 
@@ -508,29 +414,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _resources_redArrow_min_svg__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_resources_redArrow_min_svg__WEBPACK_IMPORTED_MODULE_1__);
 
 
-var getArrow = function (change) {
-    return change.newGrade < change.oldGrade ? (_resources_redArrow_min_svg__WEBPACK_IMPORTED_MODULE_1___default()) : (_resources_greenArrow_min_svg__WEBPACK_IMPORTED_MODULE_0___default());
-};
-var formatPercentage = function (percentage) {
-    return "".concat(percentage.toFixed(2), "%");
-};
-var generateText = function (change) {
-    return "".concat(change.classTitle, " used to be <b>").concat(formatPercentage(change.oldGrade), "</b>, now it's <b>").concat(formatPercentage(change.newGrade), "</b>");
-};
-var renderChanges = function (changes) {
-    var parent = $("#gradeChanges");
-    if (changes.length === 0) {
+const getArrow = (change) => change.newGrade < change.oldGrade ? (_resources_redArrow_min_svg__WEBPACK_IMPORTED_MODULE_1___default()) : (_resources_greenArrow_min_svg__WEBPACK_IMPORTED_MODULE_0___default());
+const formatPercentage = (percentage) => `${percentage.toFixed(2)}%`;
+const generateText = (change) => `${change.title} used to be <b>${formatPercentage(change.oldGrade)}</b>, now it's <b>${formatPercentage(change.newGrade)}</b>`;
+const renderChanges = (changes) => {
+    const parent = $("#gradeChanges");
+    if (changes.changes.length === 0) {
         parent.text("Your grades are the same as the last time you checked.");
         return;
     }
-    for (var _i = 0, changes_1 = changes; _i < changes_1.length; _i++) {
-        var change = changes_1[_i];
-        var changeDiv = $("<div>").css({ "margin-bottom": "5px" });
-        var arrow = $("<img>")
+    for (const change of changes.changes) {
+        const changeDiv = $("<div>").css({ "margin-bottom": "5px" });
+        const arrow = $("<img>")
             .attr("src", getArrow(change))
             .attr("width", 14)
             .css({ "margin-right": "2px" });
-        var text = $("<span>").html(generateText(change));
+        const text = $("<span>").html(generateText(change));
         changeDiv.append(arrow, text);
         parent.append(changeDiv);
     }
@@ -550,7 +449,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   gpaMap: () => (/* binding */ gpaMap)
 /* harmony export */ });
-var gpaMap = {
+const gpaMap = {
     99: 4.86,
     98: 4.71,
     97: 4.57,
@@ -613,6 +512,75 @@ var gpaMap = {
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/async module */
+/******/ 	(() => {
+/******/ 		var webpackQueues = typeof Symbol === "function" ? Symbol("webpack queues") : "__webpack_queues__";
+/******/ 		var webpackExports = typeof Symbol === "function" ? Symbol("webpack exports") : "__webpack_exports__";
+/******/ 		var webpackError = typeof Symbol === "function" ? Symbol("webpack error") : "__webpack_error__";
+/******/ 		var resolveQueue = (queue) => {
+/******/ 			if(queue && queue.d < 1) {
+/******/ 				queue.d = 1;
+/******/ 				queue.forEach((fn) => (fn.r--));
+/******/ 				queue.forEach((fn) => (fn.r-- ? fn.r++ : fn()));
+/******/ 			}
+/******/ 		}
+/******/ 		var wrapDeps = (deps) => (deps.map((dep) => {
+/******/ 			if(dep !== null && typeof dep === "object") {
+/******/ 				if(dep[webpackQueues]) return dep;
+/******/ 				if(dep.then) {
+/******/ 					var queue = [];
+/******/ 					queue.d = 0;
+/******/ 					dep.then((r) => {
+/******/ 						obj[webpackExports] = r;
+/******/ 						resolveQueue(queue);
+/******/ 					}, (e) => {
+/******/ 						obj[webpackError] = e;
+/******/ 						resolveQueue(queue);
+/******/ 					});
+/******/ 					var obj = {};
+/******/ 					obj[webpackQueues] = (fn) => (fn(queue));
+/******/ 					return obj;
+/******/ 				}
+/******/ 			}
+/******/ 			var ret = {};
+/******/ 			ret[webpackQueues] = x => {};
+/******/ 			ret[webpackExports] = dep;
+/******/ 			return ret;
+/******/ 		}));
+/******/ 		__webpack_require__.a = (module, body, hasAwait) => {
+/******/ 			var queue;
+/******/ 			hasAwait && ((queue = []).d = -1);
+/******/ 			var depQueues = new Set();
+/******/ 			var exports = module.exports;
+/******/ 			var currentDeps;
+/******/ 			var outerResolve;
+/******/ 			var reject;
+/******/ 			var promise = new Promise((resolve, rej) => {
+/******/ 				reject = rej;
+/******/ 				outerResolve = resolve;
+/******/ 			});
+/******/ 			promise[webpackExports] = exports;
+/******/ 			promise[webpackQueues] = (fn) => (queue && fn(queue), depQueues.forEach(fn), promise["catch"](x => {}));
+/******/ 			module.exports = promise;
+/******/ 			body((deps) => {
+/******/ 				currentDeps = wrapDeps(deps);
+/******/ 				var fn;
+/******/ 				var getResult = () => (currentDeps.map((d) => {
+/******/ 					if(d[webpackError]) throw d[webpackError];
+/******/ 					return d[webpackExports];
+/******/ 				}))
+/******/ 				var promise = new Promise((resolve) => {
+/******/ 					fn = () => (resolve(getResult));
+/******/ 					fn.r = 0;
+/******/ 					var fnQueue = (q) => (q !== queue && !depQueues.has(q) && (depQueues.add(q), q && !q.d && (fn.r++, q.push(fn))));
+/******/ 					currentDeps.map((dep) => (dep[webpackQueues](fnQueue)));
+/******/ 				});
+/******/ 				return fn.r ? promise : getResult();
+/******/ 			}, (err) => ((err ? reject(promise[webpackError] = err) : outerResolve(exports)), resolveQueue(queue)));
+/******/ 			queue && queue.d < 0 && (queue.d = 0);
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	(() => {
 /******/ 		// getDefaultExport function for compatibility with non-harmony modules
@@ -654,83 +622,11 @@ var gpaMap = {
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
-(() => {
-"use strict";
-/*!**********************!*\
-  !*** ./src/index.ts ***!
-  \**********************/
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _calcChanges__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./calcChanges */ "./src/calcChanges.ts");
-/* harmony import */ var _contentLoader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./contentLoader */ "./src/contentLoader.ts");
-/* harmony import */ var _extractData__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./extractData */ "./src/extractData.ts");
-/* harmony import */ var _gpaCalc__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./gpaCalc */ "./src/gpaCalc.ts");
-/* harmony import */ var _init__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./init */ "./src/init.ts");
-/* harmony import */ var _renderChanges__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./renderChanges */ "./src/renderChanges.ts");
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-
-
-
-
-
-
-void (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var currentGrades, changes, gpa;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                (0,_init__WEBPACK_IMPORTED_MODULE_4__.init)();
-                return [4 /*yield*/, (0,_contentLoader__WEBPACK_IMPORTED_MODULE_1__.contentLoader)()];
-            case 1:
-                _a.sent();
-                currentGrades = (0,_extractData__WEBPACK_IMPORTED_MODULE_2__.extractData)();
-                changes = (0,_calcChanges__WEBPACK_IMPORTED_MODULE_0__.calcChanges)(currentGrades);
-                gpa = (0,_gpaCalc__WEBPACK_IMPORTED_MODULE_3__.gpaCalc)(currentGrades);
-                $("#gpa").text("GPA: " + gpa.toFixed(2));
-                (0,_renderChanges__WEBPACK_IMPORTED_MODULE_5__.renderChanges)(changes);
-                console.log("done");
-                return [2 /*return*/];
-        }
-    });
-}); })();
-
-})();
-
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module used 'module' so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/index.ts");
+/******/ 	
 /******/ })()
 ;

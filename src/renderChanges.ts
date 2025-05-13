@@ -1,7 +1,7 @@
 import greenArrow from "./resources/greenArrow.min.svg";
 import redArrow from "./resources/redArrow.min.svg";
 
-import type { GradeChange } from "./types";
+import type { GradeChange, GradeChanges } from "./types";
 
 const getArrow = (change: GradeChange): string =>
 	change.newGrade < change.oldGrade ? redArrow : greenArrow;
@@ -10,19 +10,19 @@ const formatPercentage = (percentage: number): string =>
 	`${percentage.toFixed(2)}%`;
 
 const generateText = (change: GradeChange): string =>
-	`${change.classTitle} used to be <b>${formatPercentage(
+	`${change.title} used to be <b>${formatPercentage(
 		change.oldGrade
 	)}</b>, now it's <b>${formatPercentage(change.newGrade)}</b>`;
 
-export const renderChanges = (changes: GradeChange[]): void => {
+export const renderChanges = (changes: GradeChanges): void => {
 	const parent = $("#gradeChanges");
 
-	if (changes.length === 0) {
+	if (changes.changes.length === 0) {
 		parent.text("Your grades are the same as the last time you checked.");
 		return;
 	}
 
-	for (const change of changes) {
+	for (const change of changes.changes) {
 		const changeDiv = $("<div>").css({ "margin-bottom": "5px" });
 
 		const arrow = $("<img>")
