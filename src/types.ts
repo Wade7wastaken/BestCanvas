@@ -1,21 +1,21 @@
 export type Course = {
-	title: string;
-	grade: number;
+    title: string;
+    grade: number;
 };
 
 export type CoursesSnapshot = {
-	courses: Course[];
-	timestamp: number;
+    courses: Course[];
+    timestamp: number;
 };
 
 export type GradeChange = {
-	title: string;
-	oldGrade: number;
-	newGrade: number;
+    title: string;
+    oldGrade: number;
+    newGrade: number;
 };
 
 export type GradeChanges = {
-	changes: GradeChange[];
-	timeSaved: number;
-	now: number;
+    changes: GradeChange[];
+    timeSaved: number;
+    now: number;
 };
