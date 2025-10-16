@@ -42,15 +42,6 @@ const main = async (): Promise<void> => {
         return;
     }
 
-    if (
-        !globalThis.location.href.includes("canvas.") &&
-        !confirm(
-            "This script is only meant to run on canvas. Do you want to continue?"
-        )
-    ) {
-        throw new AlertPanic("Canceled by user");
-    }
-
     // Check for jQuery
     while (typeof jQuery === "undefined") {
         debug("Waiting for jquery");
@@ -71,8 +62,6 @@ const main = async (): Promise<void> => {
     gpaButton.insertAdjacentHTML("afterend", tile);
 
     const currentGrades = extractData();
-
-    // console.log(currentGrades);
 
     const changes = calcChanges(currentGrades);
     renderChanges(changes);
