@@ -3,14 +3,19 @@ export type Course = {
 	grade: number;
 };
 
-export type GradeChanges = {
-	changes: GradeChange[];
-	timeSaved: number | undefined;
-	now: number;
+export type CoursesSnapshot = {
+	courses: Course[];
+	timestamp: number;
 };
 
 export type GradeChange = {
 	title: string;
 	oldGrade: number;
 	newGrade: number;
+};
+
+export type GradeChanges = {
+	changes: GradeChange[];
+	timeSaved: number;
+	now: number;
 };

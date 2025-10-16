@@ -1,16 +1,16 @@
 import type { Course } from "./types";
 
 export const extractData = (): Course[] =>
-	$("#coursesContainer > .row")
+	$(".ic-DashboardCard__header")
 		.map((_, row) => ({
-			title: $(row).find("a > h3").text().split(" -")[0] ?? "",
+			title: $(row).find(".ic-DashboardCard__header-title").text().trim(),
 			grade: Number.parseFloat(
 				$(row)
-					.find("h3.showGrade")
+					.find(".bettercanvas-card-grade")
 					.text()
 					.trim()
-					.replaceAll(/[%-]/g, "")
+					.slice(0, -1)
 			),
 		}))
-		.toArray()
-		.filter((c) => !Number.isNaN(c.grade));
+		.filter((_, { grade }) => !Number.isNaN(grade))
+		.toArray();

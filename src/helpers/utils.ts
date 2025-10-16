@@ -1,25 +1,26 @@
 export class AlertPanic extends Error {
 	public constructor(message: string) {
+		alert(
+			"OCP: Something has gone wrong. See the developer console for more information."
+		);
+		console.error("OCP Error vvv");
 		super(message);
-		alert("OCP: Something has gone wrong. See the developer console for more information.")
 	}
 }
 
 const OCPDebug = process.env.NODE_ENV === "development";
 
 export const debug = (message: string): void => {
-	if (OCPDebug) console.log(message);
+	if (OCPDebug) {
+		console.log("OCP: " + message);
+	}
 };
 
-const formatResult = (
-	value: number,
-	unit: string,
-	includeAgo = true
-): string => {
-	return `${Math.round(value)} ${unit}${value === 1 ? "" : "s"}${
-		includeAgo ? " ago" : ""
-	}`;
-};
+export const sleep = (ms: number): Promise<void> =>
+	new Promise((r) => setTimeout(r, ms));
+
+const formatResult = (value: number, unit: string, includeAgo = true): string =>
+	`${Math.round(value)} ${unit}${value === 1 ? "" : "s"}${includeAgo ? " ago" : ""}`;
 
 export const formatDuration = (minutes: number): string => {
 	if (minutes < 1) {

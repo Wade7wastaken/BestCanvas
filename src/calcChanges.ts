@@ -1,21 +1,18 @@
 import { LSWrapper } from "./helpers/lsWrapper";
 
-import type { Course, GradeChange, GradeChanges } from "./types";
-
-type CoursesSnapshot = {
-	courses: Course[];
-	timestamp: number | undefined;
-};
-
-type LSData = {
-	old: CoursesSnapshot;
-	prev: CoursesSnapshot;
-};
+import type {
+	Course,
+	CoursesSnapshot,
+	GradeChange,
+	GradeChanges,
+} from "./types";
 
 const DEFAULT_LS_DATA = {
-	old: { courses: [], timestamp: undefined },
-	prev: { courses: [], timestamp: undefined },
+	courses: [],
+	timestamp: 0,
 };
+
+const LS_KEY = "oldGrades";
 
 const compare = (a: Course[], b: Course[]): GradeChange[] => {
 	const changes: GradeChange[] = [];
@@ -38,41 +35,18 @@ const compare = (a: Course[], b: Course[]): GradeChange[] => {
 };
 
 export const calcChanges = (currentCourses: Course[]): GradeChanges => {
-	const oldCourses = new LSWrapper<LSData>("oldGrades", DEFAULT_LS_DATA);
+	const snapshotLS = new LSWrapper<CoursesSnapshot>(LS_KEY, DEFAULT_LS_DATA);
+	const snapshot = snapshotLS.get();
 
 	const now = Date.now();
 
-	const {
-		value: { prev },
-	} = oldCourses;
-
-	return {
-		changes: compare(currentCourses, prev.courses),
+	const result = {
+		changes: compare(currentCourses, snapshot.courses),
 		now,
-		timeSaved: prev.timestamp,
+		timeSaved: snapshot.timestamp,
 	};
 
-	// if (now - (prev.timestamp ?? 0) > 1000 * 60 * 10) {
-	// 	const changes = compare(currentCourses, prev.courses);
-	// 	oldCourses.set({
-	// 		prev: { courses: currentCourses, timestamp: now },
-	// 		old: prev,
-	// 	});
-	// 	return {
-	// 		changes,
-	// 		now,
-	// 		timeSaved: prev.timestamp,
-	// 	};
-	// } else {
-	// 	const changes = compare(currentCourses, old.courses);
-	// 	oldCourses.set({
-	// 		prev: { courses: currentCourses, timestamp: now },
-	// 		old,
-	// 	});
-	// 	return {
-	// 		changes,
-	// 		now,
-	// 		timeSaved: old.timestamp,
-	// 	};
-	// }
+	// snapshotLS.set({ courses: currentCourses, timestamp: now });
+
+	return result;
 };

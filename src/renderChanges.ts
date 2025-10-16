@@ -1,3 +1,4 @@
+import { formatDuration } from "./helpers/utils";
 import greenArrow from "./resources/greenArrow.min.svg";
 import redArrow from "./resources/redArrow.min.svg";
 
@@ -17,10 +18,23 @@ const generateText = (change: GradeChange): string =>
 export const renderChanges = (changes: GradeChanges): void => {
 	const parent = $("#gradeChanges");
 
+	const deltaT = Math.floor((changes.now - changes.timeSaved) / (1000 * 60));
+
+	const formattedDuration = formatDuration(deltaT);
+
 	if (changes.changes.length === 0) {
-		parent.text("Your grades are the same as the last time you checked.");
+		parent.text(
+			`Your grades are the same as the last time you checked ${formattedDuration}.`
+		);
 		return;
 	}
+
+	const text = $("<div>").css({ "margin-bottom": "10px" });
+	text.text(
+		`Your grades have changed since you last checked ${formattedDuration}.`
+	);
+
+	parent.append(text);
 
 	for (const change of changes.changes) {
 		const changeDiv = $("<div>").css({ "margin-bottom": "5px" });

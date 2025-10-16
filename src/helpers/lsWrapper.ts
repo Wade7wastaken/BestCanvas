@@ -1,5 +1,5 @@
 export class LSWrapper<T> {
-	public value: T;
+	private value: T;
 	public readonly location: string;
 
 	public constructor(location: string, defaultValue: T) {
@@ -13,6 +13,10 @@ export class LSWrapper<T> {
 		}
 
 		this.value = JSON.parse(currentValue) as T;
+	}
+
+	public get(): T {
+		return this.value;
 	}
 
 	public set(newValue: T): void {
