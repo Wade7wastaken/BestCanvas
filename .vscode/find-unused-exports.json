@@ -1,0 +1,8 @@
+{
+  "ignore": {
+    "files": [
+      "c:/Users/David/Desktop/Code/mySFHSPlus/eslint.config.js",
+      "c:/Users/David/Desktop/Code/mySFHSPlus/webpack.config.js"
+    ]
+  }
+}

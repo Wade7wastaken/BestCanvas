@@ -1,4 +1,3 @@
-import { formatDuration } from "./helpers/utils";
 import greenArrow from "./resources/greenArrow.min.svg";
 import redArrow from "./resources/redArrow.min.svg";
 
@@ -14,6 +13,25 @@ const generateText = (change: GradeChange): string =>
 	`${change.title} used to be <b>${formatPercentage(
 		change.oldGrade
 	)}</b>, now it's <b>${formatPercentage(change.newGrade)}</b>`;
+
+const formatResult = (value: number, unit: string, includeAgo = true): string =>
+	`${Math.round(value)} ${unit}${value === 1 ? "" : "s"}${includeAgo ? " ago" : ""}`;
+
+const formatDuration = (minutes: number): string => {
+	if (minutes < 1) {
+		return "less than a minute ago";
+	} else if (minutes < 60) {
+		return formatResult(minutes, "minute");
+	} else if (minutes % 60 === 0) {
+		return formatResult(minutes / 60, "hour");
+	} else {
+		return `${formatResult(
+			(minutes - (minutes % 60)) / 60,
+			"hour",
+			false
+		)} and ${formatResult(minutes % 60, "minute")}`;
+	}
+};
 
 export const renderChanges = (changes: GradeChanges): void => {
 	const parent = $("#gradeChanges");

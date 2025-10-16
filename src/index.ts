@@ -1,9 +1,10 @@
 import { calcChanges } from "./calcChanges";
 import { WAIT_FOR_ELEMENT_DELAY } from "./config";
-import { extractData } from "./extractData";
 import { AlertPanic, debug, sleep } from "./helpers/utils";
 import { renderChanges } from "./renderChanges";
 import tile from "./resources/tile.html";
+
+import type { Course } from "./types";
 
 declare global {
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -11,6 +12,21 @@ declare global {
 		OCP_ran: boolean | undefined;
 	}
 }
+
+const extractData = (): Course[] =>
+	$(".ic-DashboardCard__header")
+		.map((_, row) => ({
+			title: $(row).find(".ic-DashboardCard__header-title").text().trim(),
+			grade: Number.parseFloat(
+				$(row)
+					.find(".bettercanvas-card-grade")
+					.text()
+					.trim()
+					.slice(0, -1)
+			),
+		}))
+		.filter((_, { grade }) => !Number.isNaN(grade))
+		.toArray();
 
 const main = async (): Promise<void> => {
 	debug("Running");

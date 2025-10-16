@@ -1,3 +1,4 @@
+import { LOCALSTORAGE_KEY } from "./config";
 import { LSWrapper } from "./helpers/lsWrapper";
 
 import type {
@@ -7,12 +8,10 @@ import type {
 	GradeChanges,
 } from "./types";
 
-const DEFAULT_LS_DATA = {
+const DEFAULT_LS_DATA: CoursesSnapshot = {
 	courses: [],
 	timestamp: 0,
 };
-
-const LS_KEY = "oldGrades";
 
 const compare = (a: Course[], b: Course[]): GradeChange[] => {
 	const changes: GradeChange[] = [];
@@ -35,7 +34,10 @@ const compare = (a: Course[], b: Course[]): GradeChange[] => {
 };
 
 export const calcChanges = (currentCourses: Course[]): GradeChanges => {
-	const snapshotLS = new LSWrapper<CoursesSnapshot>(LS_KEY, DEFAULT_LS_DATA);
+	const snapshotLS = new LSWrapper<CoursesSnapshot>(
+		LOCALSTORAGE_KEY,
+		DEFAULT_LS_DATA
+	);
 	const snapshot = snapshotLS.get();
 
 	const now = Date.now();
@@ -46,7 +48,7 @@ export const calcChanges = (currentCourses: Course[]): GradeChanges => {
 		timeSaved: snapshot.timestamp,
 	};
 
-	// snapshotLS.set({ courses: currentCourses, timestamp: now });
+	snapshotLS.set({ courses: currentCourses, timestamp: now });
 
 	return result;
 };

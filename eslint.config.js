@@ -11,7 +11,7 @@ export default ts.config(
 	importX.flatConfigs.typescript,
 	...ts.configs.strictTypeChecked,
 	...ts.configs.stylisticTypeChecked,
-	unicorn.configs["flat/recommended"],
+	unicorn.configs.recommended,
 	prettier,
 	{
 		ignores: ["node_modules/", "dist/", "old/"],
@@ -87,6 +87,7 @@ export default ts.config(
 		files: ["eslint.config.js"],
 		rules: {
 			"import-x/no-named-as-default-member": "off",
+			"import-x/no-named-as-default": "off",
 		},
 	}
 );

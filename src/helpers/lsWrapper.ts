@@ -1,9 +1,12 @@
+import { AlertPanic } from "./utils";
+
 export class LSWrapper<T> {
 	private value: T;
-	public readonly location: string;
 
-	public constructor(location: string, defaultValue: T) {
-		this.location = location;
+	public constructor(
+		private readonly location: string,
+		defaultValue: T
+	) {
 		const currentValue = localStorage.getItem(location);
 
 		if (currentValue === null) {
@@ -12,7 +15,13 @@ export class LSWrapper<T> {
 			return;
 		}
 
-		this.value = JSON.parse(currentValue) as T;
+		try {
+			this.value = JSON.parse(currentValue) as T;
+		} catch (error) {
+			throw new AlertPanic(
+				`Failed to parse localStorage value. Original error: ${String(error)}`
+			);
+		}
 	}
 
 	public get(): T {
