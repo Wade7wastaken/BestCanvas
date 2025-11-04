@@ -352,6 +352,10 @@ const extractData = () => $(".ic-DashboardCard__header")
     .filter((_, { grade }) => !Number.isNaN(grade))
     .toArray();
 const gradeChanges = async () => {
+    if (globalThis.location.pathname !== "/") {
+        return;
+    }
+    (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Grades: running");
     while ($(".bettercanvas-card-grade").length <= 0) {
         (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Waiting for grades");
         await (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.sleep)(_config__WEBPACK_IMPORTED_MODULE_1__.WAIT_FOR_ELEMENT_DELAY);
@@ -364,7 +368,7 @@ const gradeChanges = async () => {
     const currentGrades = extractData();
     const changes = (0,_calcChanges__WEBPACK_IMPORTED_MODULE_0__.calcChanges)(currentGrades);
     (0,_renderChanges__WEBPACK_IMPORTED_MODULE_4__.renderChanges)(changes);
-    (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Done with grade changes");
+    (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Grades: done");
 };
 const parseClassSpecifier = (s) => {
     if (s.length !== 1) {
@@ -411,6 +415,7 @@ const setHotkeys = (hotkeyMapLS) => {
     if (globalThis.location.pathname !== "/") {
         return;
     }
+    (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Hotkeys: attempting to set hotkeys");
     const courseIds = $(".ic-DashboardCard__link")
         .toArray()
         .map((card) => {
@@ -425,17 +430,20 @@ const setHotkeys = (hotkeyMapLS) => {
         .slice(0, 10);
     const last = courseIds.pop();
     if (last === undefined) {
+        (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Hotkeys: not hotkeys, exiting");
         return;
     }
     courseIds.unshift(last);
-    console.log(courseIds);
+    (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)(`Hotkeys: setting hotkeys to ${JSON.stringify(courseIds)}`);
     hotkeyMapLS.set(courseIds);
 };
 const hotkeys = () => {
+    (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Hotkeys: running");
     const hotkeyMapLS = new _helpers_lsWrapper__WEBPACK_IMPORTED_MODULE_2__.LSWrapper(_config__WEBPACK_IMPORTED_MODULE_1__.LOCALSTORAGE_HOTKEYS_KEY, undefined);
     setHotkeys(hotkeyMapLS);
     const hotkeyMap = hotkeyMapLS.get();
     if (hotkeyMap === undefined) {
+        (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Hotkeys: no hotkey map, exiting");
         return;
     }
     let first = "";
@@ -443,31 +451,32 @@ const hotkeys = () => {
     document.addEventListener("keydown", (e) => {
         first = second;
         second = e.key;
-        console.log(`first: ${first}, second: ${second}`);
         const classSpecifier = parseClassSpecifier(first);
         const pageSpecifier = parsePageSpecifier(second);
         if (classSpecifier === undefined || pageSpecifier === undefined) {
             return;
         }
-        globalThis.location.href = `https://canvas.umn.edu/courses/${hotkeyMap[classSpecifier]}/${pageSpecifier}`;
+        const location = `https://canvas.umn.edu/courses/${hotkeyMap[classSpecifier]}/${pageSpecifier}`;
+        (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)(`Hotkeys: redirecting to ${location}`);
+        globalThis.location.href = location;
     });
+    (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Hotkeys: done");
 };
 const main = async () => {
-    (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Running");
+    (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Main: running");
     if (globalThis.window.OCP_ran === true) {
-        (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Already ran, stopping");
+        (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Main: already ran, stopping");
         return;
     }
     globalThis.window.OCP_ran = true;
     // Check for jQuery
     while (typeof jQuery === "undefined") {
-        (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Waiting for jquery");
+        (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Main: waiting for jquery");
         await (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.sleep)(_config__WEBPACK_IMPORTED_MODULE_1__.WAIT_FOR_ELEMENT_DELAY);
     }
     hotkeys();
-    if (globalThis.location.pathname !== "/") {
-        void gradeChanges();
-    }
+    void gradeChanges();
+    (0,_helpers_utils__WEBPACK_IMPORTED_MODULE_3__.debug)("Main: done");
 };
 void main();
 

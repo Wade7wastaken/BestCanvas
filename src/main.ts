@@ -30,6 +30,12 @@ const extractData = (): Course[] =>
         .toArray();
 
 const gradeChanges = async (): Promise<void> => {
+    if (globalThis.location.pathname !== "/") {
+        return;
+    }
+
+    debug("Grades: running");
+
     while ($(".bettercanvas-card-grade").length <= 0) {
         debug("Waiting for grades");
         await sleep(WAIT_FOR_ELEMENT_DELAY);
@@ -48,7 +54,7 @@ const gradeChanges = async (): Promise<void> => {
     const changes = calcChanges(currentGrades);
     renderChanges(changes);
 
-    debug("Done with grade changes");
+    debug("Grades: done");
 };
 
 const parseClassSpecifier = (s: string): number | undefined => {
@@ -104,6 +110,8 @@ const setHotkeys = (hotkeyMapLS: LSWrapper<HotkeyMap>): void => {
         return;
     }
 
+    debug("Hotkeys: attempting to set hotkeys");
+
     const courseIds = $(".ic-DashboardCard__link")
         .toArray()
         .map((card) => {
@@ -118,15 +126,18 @@ const setHotkeys = (hotkeyMapLS: LSWrapper<HotkeyMap>): void => {
 
     const last = courseIds.pop();
     if (last === undefined) {
+        debug("Hotkeys: not hotkeys, exiting");
         return;
     }
     courseIds.unshift(last);
 
-    console.log(courseIds);
+    debug(`Hotkeys: setting hotkeys to ${JSON.stringify(courseIds)}`);
     hotkeyMapLS.set(courseIds);
 };
 
 const hotkeys = (): void => {
+    debug("Hotkeys: running");
+
     const hotkeyMapLS = new LSWrapper<HotkeyMap>(
         LOCALSTORAGE_HOTKEYS_KEY,
         undefined
@@ -136,6 +147,7 @@ const hotkeys = (): void => {
 
     const hotkeyMap = hotkeyMapLS.get();
     if (hotkeyMap === undefined) {
+        debug("Hotkeys: no hotkey map, exiting");
         return;
     }
 
@@ -146,8 +158,6 @@ const hotkeys = (): void => {
         first = second;
         second = e.key;
 
-        console.log(`first: ${first}, second: ${second}`);
-
         const classSpecifier = parseClassSpecifier(first);
         const pageSpecifier = parsePageSpecifier(second);
 
@@ -155,30 +165,36 @@ const hotkeys = (): void => {
             return;
         }
 
-        globalThis.location.href = `https://canvas.umn.edu/courses/${hotkeyMap[classSpecifier]}/${pageSpecifier}`;
+        const location = `https://canvas.umn.edu/courses/${hotkeyMap[classSpecifier]}/${pageSpecifier}`;
+
+        debug(`Hotkeys: redirecting to ${location}`);
+
+        globalThis.location.href = location;
     });
+
+    debug("Hotkeys: done");
 };
 
 const main = async (): Promise<void> => {
-    debug("Running");
+    debug("Main: running");
 
     if (globalThis.window.OCP_ran === true) {
-        debug("Already ran, stopping");
+        debug("Main: already ran, stopping");
         return;
     }
     globalThis.window.OCP_ran = true;
 
     // Check for jQuery
     while (typeof jQuery === "undefined") {
-        debug("Waiting for jquery");
+        debug("Main: waiting for jquery");
         await sleep(WAIT_FOR_ELEMENT_DELAY);
     }
 
     hotkeys();
 
-    if (globalThis.location.pathname !== "/") {
-        void gradeChanges();
-    }
+    void gradeChanges();
+
+    debug("Main: done");
 };
 
 void main();
