@@ -5,7 +5,7 @@ export type Course = {
 
 export type CoursesSnapshot = {
     courses: Course[];
-    timestamp: number;
+    timestamp: number | undefined;
 };
 
 export type GradeChange = {
@@ -16,6 +16,6 @@ export type GradeChange = {
 
 export type GradeChanges = {
     changes: GradeChange[];
-    timeSaved: number;
+    timeSaved: number | undefined;
     now: number;
 };

@@ -36,23 +36,31 @@ const formatDuration = (minutes: number): string => {
 export const renderChanges = (changes: GradeChanges): void => {
     const parent = $("#gradeChanges");
 
-    const deltaT = Math.floor((changes.now - changes.timeSaved) / (1000 * 60));
-
-    const formattedDuration = formatDuration(deltaT);
-
-    if (changes.changes.length === 0) {
+    if (changes.timeSaved === undefined) {
         parent.text(
-            `Your grades are the same as the last time you checked ${formattedDuration}.`
+            "Your current grades have been saved. Check back later to see how they have changed."
         );
-        return;
+    } else {
+        const deltaT = Math.floor(
+            (changes.now - changes.timeSaved) / (1000 * 60)
+        );
+
+        const formattedDuration = formatDuration(deltaT);
+
+        if (changes.changes.length === 0) {
+            parent.text(
+                `Your grades are the same as the last time you checked ${formattedDuration}.`
+            );
+            return;
+        }
+
+        const text = $("<div>").css({ "margin-bottom": "10px" });
+        text.text(
+            `Your grades have changed since you last checked ${formattedDuration}.`
+        );
+
+        parent.append(text);
     }
-
-    const text = $("<div>").css({ "margin-bottom": "10px" });
-    text.text(
-        `Your grades have changed since you last checked ${formattedDuration}.`
-    );
-
-    parent.append(text);
 
     for (const change of changes.changes) {
         const changeDiv = $("<div>").css({ "margin-bottom": "5px" });
