@@ -1,5 +1,5 @@
 import { WAIT_FOR_ELEMENT_DELAY } from "../config";
-import { AlertPanic, debug, sleep } from "../helpers/utils";
+import { AlertPanic, debug, sleep } from "../utils";
 
 import { calcChanges } from "./calcChanges";
 import { renderChanges } from "./renderChanges";

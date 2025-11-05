@@ -1,5 +1,5 @@
 import { LOCALSTORAGE_GRADES_KEY } from "../config";
-import { LSWrapper } from "../helpers/lsWrapper";
+import { LSWrapper } from "../lsWrapper";
 
 import type {
     Course,

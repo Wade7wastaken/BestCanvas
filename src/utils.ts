@@ -1,4 +1,4 @@
-import { LOCALSTORAGE_GRADES_KEY, LOCALSTORAGE_HOTKEYS_KEY } from "../config";
+import { LOCALSTORAGE_GRADES_KEY, LOCALSTORAGE_HOTKEYS_KEY } from "./config";
 
 export class AlertPanic extends Error {
     public constructor(message: string) {
