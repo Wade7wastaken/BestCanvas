@@ -106,6 +106,10 @@ export const hotkeys = (): void => {
         first = second;
         second = e.key;
 
+        if (second === "z" && globalThis.location.pathname !== "/") {
+            globalThis.location.pathname = "/";
+        }
+
         const classSpecifier = parseClassSpecifier(first);
         const pageSpecifier = parsePageSpecifier(second);
 
@@ -119,11 +123,11 @@ export const hotkeys = (): void => {
             return;
         }
 
-        const location = `https://canvas.umn.edu/courses/${hotkeyMap[classSpecifier]}/${pageSpecifier}`;
+        const location = `/courses/${hotkeyMap[classSpecifier]}/${pageSpecifier}`;
 
         debug(`Hotkeys: redirecting to ${location}`);
 
-        globalThis.location.href = location;
+        globalThis.location.pathname = location;
     });
 
     debug("Hotkeys: done");
