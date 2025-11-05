@@ -37,7 +37,7 @@ const gradeChanges = async (): Promise<void> => {
     debug("Grades: running");
 
     while ($(".bettercanvas-card-grade").length <= 0) {
-        debug("Waiting for grades");
+        debug("Grades: waiting for grades");
         await sleep(WAIT_FOR_ELEMENT_DELAY);
     }
 
@@ -105,9 +105,14 @@ const parsePageSpecifier = (s: string): string | undefined => {
 
 type HotkeyMap = number[] | undefined;
 
-const setHotkeys = (hotkeyMapLS: LSWrapper<HotkeyMap>): void => {
+const setHotkeys = async (hotkeyMapLS: LSWrapper<HotkeyMap>): Promise<void> => {
     if (globalThis.location.pathname !== "/") {
         return;
+    }
+
+    while ($(".ic-DashboardCard__link").length <= 0) {
+        debug("Hotkeys: waiting for cards");
+        await sleep(WAIT_FOR_ELEMENT_DELAY);
     }
 
     debug("Hotkeys: attempting to set hotkeys");
@@ -115,7 +120,6 @@ const setHotkeys = (hotkeyMapLS: LSWrapper<HotkeyMap>): void => {
     const courseIds = $(".ic-DashboardCard__link")
         .toArray()
         .map((card) => {
-            console.log(card);
             const courseIdStr = card.getAttribute("href")?.split("/").at(-1);
             if (courseIdStr === undefined) {
                 throw new AlertPanic("Couldn't find course id");
@@ -143,18 +147,17 @@ const hotkeys = (): void => {
         undefined
     );
 
-    setHotkeys(hotkeyMapLS);
-
-    const hotkeyMap = hotkeyMapLS.get();
-    if (hotkeyMap === undefined) {
-        debug("Hotkeys: no hotkey map, exiting");
-        return;
-    }
+    void setHotkeys(hotkeyMapLS);
 
     let first = "";
     let second = "";
 
     document.addEventListener("keydown", (e) => {
+        const active = document.activeElement;
+        if (active?.tagName === "INPUT" || active?.tagName === "TEXTAREA") {
+            return;
+        }
+
         first = second;
         second = e.key;
 
@@ -162,6 +165,12 @@ const hotkeys = (): void => {
         const pageSpecifier = parsePageSpecifier(second);
 
         if (classSpecifier === undefined || pageSpecifier === undefined) {
+            return;
+        }
+
+        const hotkeyMap = hotkeyMapLS.get();
+        if (hotkeyMap === undefined) {
+            debug("Hotkeys: no hotkey map, exiting");
             return;
         }
 

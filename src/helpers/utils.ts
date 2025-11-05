@@ -1,11 +1,12 @@
-import { LOCALSTORAGE_KEY } from "../config";
+import { LOCALSTORAGE_GRADES_KEY, LOCALSTORAGE_HOTKEYS_KEY } from "../config";
 
 export class AlertPanic extends Error {
     public constructor(message: string) {
         alert(
             "OCP: Something has gone wrong. See the developer console for more information."
         );
-        localStorage.removeItem(LOCALSTORAGE_KEY);
+        localStorage.removeItem(LOCALSTORAGE_GRADES_KEY);
+        localStorage.removeItem(LOCALSTORAGE_HOTKEYS_KEY);
         console.error("OCP Error vvv");
         super(message);
     }
