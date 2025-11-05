@@ -1,12 +1,12 @@
-import { LOCALSTORAGE_GRADES_KEY } from "./config";
-import { LSWrapper } from "./helpers/lsWrapper";
+import { LOCALSTORAGE_GRADES_KEY } from "../config";
+import { LSWrapper } from "../helpers/lsWrapper";
 
 import type {
     Course,
     CoursesSnapshot,
     GradeChange,
     GradeChanges,
-} from "./types";
+} from "./grades";
 
 const DEFAULT_LS_DATA: CoursesSnapshot = {
     courses: [],
