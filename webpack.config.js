@@ -1,6 +1,20 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import webpack from "webpack";
+
+const header = `// ==UserScript==
+// @name         On Canvas Plus
+// @namespace    http://tampermonkey.net/
+// @version      2025-10-03
+// @description  Shows grade changes on the courses pages. Requires BetterCanvas.
+// @author       David Callender
+// @match        https://canvas.umn.edu/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=umn.edu
+// @grant        none
+// ==/UserScript==
+`;
+
 /** @type {import('webpack').Configuration} */
 const config = {
     mode: "development",
@@ -13,6 +27,14 @@ const config = {
         ),
         filename: "bundle.js",
     },
+    plugins: [
+        new webpack.BannerPlugin({
+            banner: header,
+            stage: webpack.Compilation.PROCESS_ASSETS_STAGE_SUMMARIZE,
+            raw: true,
+            entryOnly: true,
+        }),
+    ],
     module: {
         rules: [
             {

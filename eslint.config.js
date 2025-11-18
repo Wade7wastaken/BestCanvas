@@ -85,7 +85,7 @@ export default defineConfig(
         ...ts.configs.disableTypeChecked,
     },
     {
-        files: ["eslint.config.js"],
+        files: ["eslint.config.js", "webpack.config.js"],
         rules: {
             "import-x/no-named-as-default-member": "off",
             "import-x/no-named-as-default": "off",
