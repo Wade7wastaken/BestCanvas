@@ -98,7 +98,6 @@ const setHotkeys = async (hotkeyMapLS: LSWrapper<HotkeyMap>): Promise<void> => {
         courseIds.unshift(0);
     }
 
-
     debug(`Hotkeys: setting hotkeys to ${JSON.stringify(courseIds)}`);
     hotkeyMapLS.set(courseIds);
 };
