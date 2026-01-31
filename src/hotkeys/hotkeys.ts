@@ -2,16 +2,23 @@ import { LOCALSTORAGE_HOTKEYS_KEY, WAIT_FOR_ELEMENT_DELAY } from "../config";
 import { LSWrapper } from "../lsWrapper";
 import { AlertPanic, debug, sleep } from "../utils";
 
+/**
+ * Parses a pressed key into a number from 0 to 9 inclusive.
+ * @param s The key pressed.
+ * @returns The integer representing the class or undefined if the input is
+ * invalid.
+ */
 const parseClassSpecifier = (s: string): number | undefined => {
     if (s.length !== 1) {
         return undefined;
     }
+
     const codePoint = s.codePointAt(0);
     if (codePoint === undefined) {
         return undefined;
     }
-    const index = codePoint - 48;
 
+    const index = codePoint - 48;
     if (index >= 10) {
         return undefined;
     }
@@ -19,27 +26,29 @@ const parseClassSpecifier = (s: string): number | undefined => {
     return index;
 };
 
+/**
+ * Returns the path segment of the course page corresponding to a pressed
+ * hotkey.
+ * @param s The key pressed.
+ * @returns The path segment of the page corresponding to the hotkey, or
+ * undefined if the hotkey is invalid.
+ */
 const parsePageSpecifier = (s: string): string | undefined => {
     switch (s) {
-        // Home
         case "h": {
-            return "";
+            return ""; // Home
         }
-        // Assignments
         case "a": {
-            return "assignments";
+            return "assignments"; // Assignments
         }
-        // Discussions
         case "d": {
-            return "discussion_topics";
+            return "discussion_topics"; // Discussions
         }
-        // Grades
         case "g": {
-            return "grades";
+            return "grades"; // Grades
         }
-        // Modules
         case "m": {
-            return "modules";
+            return "modules"; // Modules
         }
 
         default: {
@@ -50,6 +59,11 @@ const parsePageSpecifier = (s: string): string | undefined => {
 
 type HotkeyMap = number[] | undefined;
 
+/**
+ * Sets the hotkeys to the first 10 courses on the canvas home page.
+ * @param hotkeyMapLS The LSWrapper to put the hotkeys in.
+ * @returns A Promise.
+ */
 const setHotkeys = async (hotkeyMapLS: LSWrapper<HotkeyMap>): Promise<void> => {
     if (globalThis.location.pathname !== "/") {
         return;
@@ -73,12 +87,17 @@ const setHotkeys = async (hotkeyMapLS: LSWrapper<HotkeyMap>): Promise<void> => {
         })
         .slice(0, 10);
 
-    const last = courseIds.pop();
-    if (last === undefined) {
-        debug("Hotkeys: not hotkeys, exiting");
-        return;
+    if (courseIds.length === 10) {
+        const last = courseIds.pop();
+        if (last === undefined) {
+            debug("Hotkeys: no hotkeys, exiting");
+            return;
+        }
+        courseIds.unshift(last);
+    } else {
+        courseIds.unshift(0);
     }
-    courseIds.unshift(last);
+
 
     debug(`Hotkeys: setting hotkeys to ${JSON.stringify(courseIds)}`);
     hotkeyMapLS.set(courseIds);
@@ -97,6 +116,34 @@ export const hotkeys = (): void => {
     let first = "";
     let second = "";
 
+    const home = (): string | undefined => {
+        if (second === "z" && globalThis.location.pathname !== "/") {
+            return "/";
+        }
+        return undefined;
+    };
+
+    const courseSectionHotkey = (): string | undefined => {
+        const classSpecifier = parseClassSpecifier(first);
+        const pageSpecifier = parsePageSpecifier(second);
+
+        if (classSpecifier === undefined || pageSpecifier === undefined) {
+            return undefined;
+        }
+
+        const hotkeyMap = hotkeyMapLS.get();
+        if (hotkeyMap === undefined) {
+            debug("Hotkeys: no hotkey map, exiting");
+            return undefined;
+        }
+
+        const location = `/courses/${hotkeyMap[classSpecifier]}/${pageSpecifier}`;
+
+        debug(`Hotkeys: redirecting to ${location}`);
+
+        return location;
+    };
+
     document.addEventListener("keydown", (e) => {
         const active = document.activeElement;
         if (active?.tagName === "INPUT" || active?.tagName === "TEXTAREA") {
@@ -106,28 +153,13 @@ export const hotkeys = (): void => {
         first = second;
         second = e.key;
 
-        if (second === "z" && globalThis.location.pathname !== "/") {
-            globalThis.location.pathname = "/";
+        for (const hotkeyHandler of [home, courseSectionHotkey]) {
+            const target = hotkeyHandler();
+            if (target != undefined) {
+                globalThis.location.pathname = target;
+                break;
+            }
         }
-
-        const classSpecifier = parseClassSpecifier(first);
-        const pageSpecifier = parsePageSpecifier(second);
-
-        if (classSpecifier === undefined || pageSpecifier === undefined) {
-            return;
-        }
-
-        const hotkeyMap = hotkeyMapLS.get();
-        if (hotkeyMap === undefined) {
-            debug("Hotkeys: no hotkey map, exiting");
-            return;
-        }
-
-        const location = `/courses/${hotkeyMap[classSpecifier]}/${pageSpecifier}`;
-
-        debug(`Hotkeys: redirecting to ${location}`);
-
-        globalThis.location.pathname = location;
     });
 
     debug("Hotkeys: done");
