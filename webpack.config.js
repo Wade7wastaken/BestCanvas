@@ -9,8 +9,7 @@ const header = `// ==UserScript==
 // @version      2025-10-03
 // @description  Shows grade changes on the courses pages. Requires BetterCanvas.
 // @author       David Callender
-// @match        https://canvas.umn.edu/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=umn.edu
+// @include      /^https:\\/\\/canvas\\.[^\\/]+\\.edu\\/.*/
 // @grant        none
 // ==/UserScript==
 `;
