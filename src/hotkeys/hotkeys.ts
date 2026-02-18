@@ -26,6 +26,20 @@ const parseClassSpecifier = (s: string): number | undefined => {
     return index;
 };
 
+const pageSpecifierMap: Record<string, string> = {
+    h: "", // Home
+    n: "announcements", // Announcements
+    m: "modules", // Modules
+    p: "pages", // Pages
+    f: "files", // Files
+    a: "assignments", // Assignments
+    g: "grades", // Grades
+    u: "users", // People
+    d: "discussion_topics", // Discussions
+    c: "collaborations", // Collaborations
+    s: "assignments/syllabus", // Syllabus
+};
+
 /**
  * Returns the path segment of the course page corresponding to a pressed
  * hotkey.
@@ -33,47 +47,8 @@ const parseClassSpecifier = (s: string): number | undefined => {
  * @returns The path segment of the page corresponding to the hotkey, or
  * undefined if the hotkey is invalid.
  */
-const parsePageSpecifier = (s: string): string | undefined => {
-    switch (s) {
-        case "h": {
-            return ""; // Home
-        }
-        case "n": {
-            return "announcements"; // Announcements
-        }
-        case "m": {
-            return "modules"; // Modules
-        }
-        case "p": {
-            return "pages"; // Pages
-        }
-        case "f": {
-            return "files"; // Files
-        }
-        case "a": {
-            return "assignments"; // Assignments
-        }
-        case "g": {
-            return "grades"; // Grades
-        }
-        case "u": {
-            return "users"; // People
-        }
-        case "d": {
-            return "discussion_topics"; // Discussions
-        }
-        case "c": {
-            return "collaborations"; // Collaborations
-        }
-        case "s": {
-            return "assignments/syllabus"; // Syllabus
-        }
-
-        default: {
-            return undefined;
-        }
-    }
-};
+const parsePageSpecifier = (s: string): string | undefined =>
+    pageSpecifierMap[s];
 
 type HotkeyMap = number[] | undefined;
 
