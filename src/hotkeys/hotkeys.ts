@@ -115,14 +115,14 @@ export const hotkeys = (): void => {
     let first = "";
     let second = "";
 
-    const home = (): string | undefined => {
+    const hkHome = (): string | undefined => {
         if (second === "z" && globalThis.location.pathname !== "/") {
             return "/";
         }
         return undefined;
     };
 
-    const courseSectionHotkey = (): string | undefined => {
+    const hkCourseAndPage = (): string | undefined => {
         const classSpecifier = parseClassSpecifier(first);
         const pageSpecifier = parsePageSpecifier(second);
 
@@ -143,6 +143,32 @@ export const hotkeys = (): void => {
         return location;
     };
 
+    const hkPage = (): string | undefined => {
+        const pageSpecifier = parsePageSpecifier(second);
+        if (pageSpecifier === undefined) {
+            return undefined;
+        }
+
+        let courseId = undefined;
+        for (const section of globalThis.location.pathname.split("/")) {
+            const parsed = Number.parseInt(section);
+            if (!Number.isNaN(parsed)) {
+                courseId = parsed;
+                break;
+            }
+        }
+
+        if (courseId === undefined) {
+            return undefined;
+        }
+
+        const location = `/courses/${courseId}/${pageSpecifier}`;
+
+        debug(`Hotkeys: redirecting to ${location}`);
+
+        return location;
+    };
+
     document.addEventListener("keydown", (e) => {
         const active = document.activeElement;
         if (active?.tagName === "INPUT" || active?.tagName === "TEXTAREA") {
@@ -152,10 +178,11 @@ export const hotkeys = (): void => {
         first = second;
         second = e.key;
 
-        for (const hotkeyHandler of [home, courseSectionHotkey]) {
+        for (const hotkeyHandler of [hkHome, hkCourseAndPage, hkPage]) {
             const target = hotkeyHandler();
             if (target != undefined) {
                 globalThis.location.pathname = target;
+                globalThis.location.search = "";
                 break;
             }
         }
