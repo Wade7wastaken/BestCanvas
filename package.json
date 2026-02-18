@@ -7,7 +7,7 @@
         "build": "webpack",
         "start": "webpack --watch",
         "export": "webpack --mode production",
-        "lint": "eslint",
+        "lint": "eslint .",
         "format": "prettier --write ."
     },
     "author": "",
