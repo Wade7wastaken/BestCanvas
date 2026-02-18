@@ -38,17 +38,35 @@ const parsePageSpecifier = (s: string): string | undefined => {
         case "h": {
             return ""; // Home
         }
+        case "n": {
+            return "announcements"; // Announcements
+        }
+        case "m": {
+            return "modules"; // Modules
+        }
+        case "p": {
+            return "pages"; // Pages
+        }
+        case "f": {
+            return "files"; // Files
+        }
         case "a": {
             return "assignments"; // Assignments
-        }
-        case "d": {
-            return "discussion_topics"; // Discussions
         }
         case "g": {
             return "grades"; // Grades
         }
-        case "m": {
-            return "modules"; // Modules
+        case "u": {
+            return "users"; // People
+        }
+        case "d": {
+            return "discussion_topics"; // Discussions
+        }
+        case "c": {
+            return "collaborations"; // Collaborations
+        }
+        case "s": {
+            return "assignments/syllabus"; // Syllabus
         }
 
         default: {
@@ -181,8 +199,8 @@ export const hotkeys = (): void => {
         for (const hotkeyHandler of [hkHome, hkCourseAndPage, hkPage]) {
             const target = hotkeyHandler();
             if (target != undefined) {
-                globalThis.location.pathname = target;
                 globalThis.location.search = "";
+                globalThis.location.pathname = target;
                 break;
             }
         }
