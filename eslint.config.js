@@ -89,6 +89,7 @@ export default defineConfig(
         rules: {
             "import-x/no-named-as-default-member": "off",
             "import-x/no-named-as-default": "off",
+            "@typescript-eslint/explicit-function-return-type": "off",
         },
     }
 );

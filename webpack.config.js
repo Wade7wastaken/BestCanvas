@@ -3,16 +3,25 @@ import { fileURLToPath } from "node:url";
 
 import webpack from "webpack";
 
-const header = `// ==UserScript==
-// @name         On Canvas Plus
-// @namespace    http://tampermonkey.net/
-// @version      2025-10-03
-// @description  Shows grade changes on the courses pages. Requires BetterCanvas.
-// @author       David Callender
-// @include      /^https:\\/\\/canvas\\.[^\\/]+\\.edu\\/.*/
-// @grant        none
-// ==/UserScript==
-`;
+/**
+ * Generates the Tampermonkey header to append to the top of the bundle.
+ * @returns {string}
+ */
+const generateHeader = () => {
+    const today = new Date();
+    const version = `${today.getUTCFullYear()}.${today.getUTCMonth() + 1}.${today.getUTCDate()}.${today.getUTCHours()}.${today.getUTCMinutes()}.${today.getUTCSeconds()}`;
+    return String.raw`// ==UserScript==
+    // @name         BestCanvas
+    // @namespace    http://tampermonkey.net/
+    // @version      ${version}
+    // @description  Shows grade changes on the courses pages and adds hotkeys. Requires BetterCanvas.
+    // @source       https://github.com/Wade7wastaken/BestCanvas
+    // @author       David Callender
+    // @include      /^https:\/\/canvas\.[^\/]+\.edu\/.*/
+    // @grant        none
+    // ==/UserScript==
+    `;
+};
 
 /** @type {import('webpack').Configuration} */
 const config = {
@@ -28,7 +37,7 @@ const config = {
     },
     plugins: [
         new webpack.BannerPlugin({
-            banner: header,
+            banner: generateHeader(),
             stage: webpack.Compilation.PROCESS_ASSETS_STAGE_SUMMARIZE,
             raw: true,
             entryOnly: true,
