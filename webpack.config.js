@@ -11,16 +11,15 @@ const generateHeader = () => {
     const today = new Date();
     const version = `${today.getUTCFullYear()}.${today.getUTCMonth() + 1}.${today.getUTCDate()}.${today.getUTCHours()}.${today.getUTCMinutes()}.${today.getUTCSeconds()}`;
     return String.raw`// ==UserScript==
-    // @name         BestCanvas
-    // @namespace    http://tampermonkey.net/
-    // @version      ${version}
-    // @description  Shows grade changes on the courses pages and adds hotkeys. Requires BetterCanvas.
-    // @source       https://github.com/Wade7wastaken/BestCanvas
-    // @author       David Callender
-    // @include      /^https:\/\/canvas\.[^\/]+\.edu\/.*/
-    // @grant        none
-    // ==/UserScript==
-    `;
+// @name         BestCanvas
+// @namespace    http://tampermonkey.net/
+// @version      ${version}
+// @description  Shows grade changes on the courses pages and adds hotkeys. Requires BetterCanvas.
+// @source       https://github.com/Wade7wastaken/BestCanvas
+// @author       David Callender
+// @include      /^https:\/\/canvas\.[^\/]+\.edu\/.*/
+// @grant        none
+// ==/UserScript==`;
 };
 
 /** @type {import('webpack').Configuration} */

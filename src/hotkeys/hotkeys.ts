@@ -8,7 +8,7 @@ import { AlertPanic, debug, sleep } from "../utils";
  * @returns The integer representing the class or undefined if the input is
  * invalid.
  */
-const parseClassSpecifier = (s: string): number | undefined => {
+const parseClassIndex = (s: string): number | undefined => {
     if (s.length !== 1) {
         return undefined;
     }
@@ -23,7 +23,8 @@ const parseClassSpecifier = (s: string): number | undefined => {
         return undefined;
     }
 
-    return index;
+    // Set the 0 key to the last index, and shift everything else over.
+    return index === 0 ? 9 : index - 1;
 };
 
 const pageSpecifierMap: Record<string, string> = {
@@ -80,17 +81,6 @@ const setHotkeys = async (hotkeyMapLS: LSWrapper<HotkeyMap>): Promise<void> => {
         })
         .slice(0, 10);
 
-    if (courseIds.length === 10) {
-        const last = courseIds.pop();
-        if (last === undefined) {
-            debug("Hotkeys: no hotkeys, exiting");
-            return;
-        }
-        courseIds.unshift(last);
-    } else {
-        courseIds.unshift(0);
-    }
-
     debug(`Hotkeys: setting hotkeys to ${JSON.stringify(courseIds)}`);
     hotkeyMapLS.set(courseIds);
 };
@@ -116,10 +106,10 @@ export const hotkeys = (): void => {
     };
 
     const hkCourseAndPage = (): string | undefined => {
-        const classSpecifier = parseClassSpecifier(first);
+        const classIndex = parseClassIndex(first);
         const pageSpecifier = parsePageSpecifier(second);
 
-        if (classSpecifier === undefined || pageSpecifier === undefined) {
+        if (classIndex === undefined || pageSpecifier === undefined) {
             return undefined;
         }
 
@@ -128,8 +118,13 @@ export const hotkeys = (): void => {
             debug("Hotkeys: no hotkey map, exiting");
             return undefined;
         }
+        
+        const classId = hotkeyMap[classIndex];
+        if (classId === undefined) {
+            return undefined;
+        }
 
-        const location = `/courses/${hotkeyMap[classSpecifier]}/${pageSpecifier}`;
+        const location = `/courses/${classId}/${pageSpecifier}`;
 
         debug(`Hotkeys: redirecting to ${location}`);
 
