@@ -1,8 +1,8 @@
 import { WAIT_FOR_ELEMENT_DELAY } from "../config";
 import { AlertPanic, debug, sleep } from "../utils";
 
-import { calcChanges } from "./calcChanges";
-import { renderChanges } from "./renderChanges";
+import { generateReport } from "./calcChanges";
+import { renderReport } from "./renderChanges";
 import tile from "./resources/tile.html";
 
 export type Course = {
@@ -21,13 +21,13 @@ export type GradeChange = {
     newGrade: number;
 };
 
-export type GradeChanges = {
+export type GradeReport = {
     changes: GradeChange[];
     timeSaved: number | undefined;
     now: number;
 };
 
-const extractData = (): Course[] =>
+const extractCourseData = (): Course[] =>
     $(".ic-DashboardCard__header")
         .map((_, row) => ({
             title: $(row).find(".ic-DashboardCard__header-title").text().trim(),
@@ -62,10 +62,10 @@ export const grades = async (): Promise<void> => {
 
     gpaButton.insertAdjacentHTML("afterend", tile);
 
-    const currentGrades = extractData();
+    const currentCourses = extractCourseData();
 
-    const changes = calcChanges(currentGrades);
-    renderChanges(changes);
+    const report = generateReport(currentCourses);
+    renderReport(report);
 
     debug("Grades: done");
 };

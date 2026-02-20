@@ -5,7 +5,7 @@ import type {
     Course,
     CoursesSnapshot,
     GradeChange,
-    GradeChanges,
+    GradeReport,
 } from "./grades";
 
 const DEFAULT_LS_DATA: CoursesSnapshot = {
@@ -16,24 +16,22 @@ const DEFAULT_LS_DATA: CoursesSnapshot = {
 const compare = (a: Course[], b: Course[]): GradeChange[] => {
     const changes: GradeChange[] = [];
 
-    for (const currentCourse of a) {
-        const oldCourse = b.find(({ title }) => title === currentCourse.title);
-        if (
-            oldCourse !== undefined &&
-            oldCourse.grade !== currentCourse.grade
-        ) {
-            changes.push({
-                title: currentCourse.title,
-                newGrade: currentCourse.grade,
-                oldGrade: oldCourse.grade,
-            });
+    for (const current of a) {
+        const old = b.find(({ title }) => title === current.title);
+        if (old === undefined || old.grade === current.grade) {
+            continue;
         }
+        changes.push({
+            title: current.title,
+            newGrade: current.grade,
+            oldGrade: old.grade,
+        });
     }
 
     return changes;
 };
 
-export const calcChanges = (currentCourses: Course[]): GradeChanges => {
+export const generateReport = (currentCourses: Course[]): GradeReport => {
     const snapshotLS = new LSWrapper<CoursesSnapshot>(
         LOCALSTORAGE_GRADES_KEY,
         DEFAULT_LS_DATA
@@ -42,13 +40,11 @@ export const calcChanges = (currentCourses: Course[]): GradeChanges => {
 
     const now = Date.now();
 
-    const result = {
+    snapshotLS.set({ courses: currentCourses, timestamp: now });
+
+    return {
         changes: compare(currentCourses, snapshot.courses),
         now,
         timeSaved: snapshot.timestamp,
     };
-
-    snapshotLS.set({ courses: currentCourses, timestamp: now });
-
-    return result;
 };

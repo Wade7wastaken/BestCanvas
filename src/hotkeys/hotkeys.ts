@@ -118,7 +118,7 @@ export const hotkeys = (): void => {
             debug("Hotkeys: no hotkey map, exiting");
             return undefined;
         }
-        
+
         const classId = hotkeyMap[classIndex];
         if (classId === undefined) {
             return undefined;
@@ -158,6 +158,9 @@ export const hotkeys = (): void => {
     };
 
     document.addEventListener("keydown", (e) => {
+        if (e.shiftKey || e.ctrlKey || e.altKey) {
+            return;
+        }
         const active = document.activeElement;
         if (active?.tagName === "INPUT" || active?.tagName === "TEXTAREA") {
             return;
