@@ -1,6 +1,5 @@
 import { LOCALSTORAGE_GRADES_KEY, WAIT_FOR_ELEMENT_DELAY } from "../config";
-import { LSWrapper } from "../lsWrapper";
-import { AlertPanic, debug, sleep } from "../utils";
+import { AlertPanic, debug, LSWrapper, sleep } from "../utils";
 
 import greenArrow from "./resources/greenArrow.min.svg";
 import redArrow from "./resources/redArrow.min.svg";

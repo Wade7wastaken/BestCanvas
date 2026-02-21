@@ -1,6 +1,5 @@
 import { LOCALSTORAGE_HOTKEYS_KEY, WAIT_FOR_ELEMENT_DELAY } from "../config";
-import { LSWrapper } from "../lsWrapper";
-import { AlertPanic, debug, sleep } from "../utils";
+import { AlertPanic, debug, LSWrapper, sleep } from "../utils";
 
 /**
  * Parses a pressed key into a number from 0 to 9 inclusive.
